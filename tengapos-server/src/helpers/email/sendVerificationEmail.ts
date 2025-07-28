@@ -1,28 +1,28 @@
 import nodemailer from "nodemailer";
 
 type SendVerificationEmailOptions = {
-    to: string;
-    name: string;
-    token: string;
-    type: string
+  to: string;
+  name: string;
+  token: string;
+  type: string
 };
 
 export async function sendVerificationEmail({ to, name, token, type }: SendVerificationEmailOptions) {
-    const transporter = nodemailer.createTransport({
-        service: process.env.SMTP_PROVIDER,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
+  const transporter = nodemailer.createTransport({
+    service: process.env.SMTP_PROVIDER,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
 
-    const verificationUrl = `${process.env.BACKEND_URL}/verify-email?token=${token}&type=${type}`;
+  const verificationUrl = `${process.env.BACKEND_URL}/api/tengapos/auth/verify-email?token=${token}&type=${type}`;
 
-    const mailOptions = {
-        from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
-        to,
-        subject: "Verify your email address",
-        html: `
+  const mailOptions = {
+    from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
+    to,
+    subject: "Verify your email address",
+    html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
         <h2>Welcome to TengaPOS, ${name}!</h2>
         <p>Please verify your email address to activate your account.</p>
@@ -44,13 +44,13 @@ export async function sendVerificationEmail({ to, name, token, type }: SendVerif
         <p>Thank you,<br />The TengaPOS Team</p>
       </div>
     `,
-    };
+  };
 
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log(`Verification email sent to ${to}`);
-    } catch (error) {
-        console.error("Error sending verification email:", error);
-        throw new Error("Failed to send verification email");
-    }
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Verification email sent to ${to}`);
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw new Error("Failed to send verification email");
+  }
 }
