@@ -4,9 +4,10 @@ type SendVerificationEmailOptions = {
     to: string;
     name: string;
     token: string;
+    type: string
 };
 
-export async function sendVerificationEmail({ to, name, token }: SendVerificationEmailOptions) {
+export async function sendVerificationEmail({ to, name, token, type }: SendVerificationEmailOptions) {
     const transporter = nodemailer.createTransport({
         service: process.env.SMTP_PROVIDER,
         auth: {
@@ -15,7 +16,7 @@ export async function sendVerificationEmail({ to, name, token }: SendVerificatio
         },
     });
 
-    const verificationUrl = `${process.env.BACKEND_URL}/verify-email?token=${token}`;
+    const verificationUrl = `${process.env.BACKEND_URL}/verify-email?token=${token}&type=${type}`;
 
     const mailOptions = {
         from: `"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM_ADDRESS}>`,
