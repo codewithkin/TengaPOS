@@ -16,6 +16,8 @@ model Business {
   businessEmail String
   businessLogo  String? // Url to business logo in object storage
 
+  password   String
+
   verificationTokens  VerificationTokenBusiness[]
   verified  Boolean @default(false)
 
