@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id String @id @default(uuid())
+
+  ownerName String
+  businessName  String
+  businessEmail String
+  businessLogo  String? // Url to business logo in object storage
+
+  plan  String? @default("Basic") // "Basic", "Pro", "Unlimited"
+  phoneNumber String?
+  location String? // City
+  isActive Boolean @default(true)
+  slug String? @unique
+
+  createdAt DateTime @default(now())
+
+   // Relations
+  users          User[]
+  products       Product[]
+  customers      Customer[]
+  sales          Sale[]
+}
+
+model User {
+  id         String   @id @default(uuid())
+
+  email      String   @unique
+  password   String
+
+  name       String
+  role       String   @default("admin") // admin, staff
+  phone      String?
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Product {
+  id           String   @id @default(uuid())
+
+  name         String
+  description  String?
+
+  inventory Int @default(0)
+
+  price        Float
+  imageUrl     String?
+  quantity     Int      @default(0)
+
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sales    Sale[]
+}
+
+model Customer {
+  id           String   @id @default(uuid())
+
+  name         String
+  phone        String?
+
+  totalSpent   Float    @default(0)
+
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sales        Sale[]
+}
+
+model Sale {
+  id           String   @id @default(uuid())
+
+  total        Float
+
+  paymentType  String   // "cash", "mobile", "card", etc.
+
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id])
+
+  customerId   String?
+  customer     Customer? @relation(fields: [customerId], references: [id])
+
+  createdAt    DateTime @default(now())
+
+  items    Product[]
+}
