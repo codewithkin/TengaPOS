@@ -18,6 +18,8 @@ import { cn } from '~/lib/cn';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
 
+import { RootSiblingParent } from 'react-native-root-siblings';
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -28,7 +30,7 @@ export default function RootLayout() {
   const { colorScheme, isDarkColorScheme } = useColorScheme();
 
   return (
-    <>
+    <RootSiblingParent>
       <StatusBar
         key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
         style={isDarkColorScheme ? 'light' : 'dark'}
@@ -48,7 +50,7 @@ export default function RootLayout() {
           </ActionSheetProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
-    </>
+    </RootSiblingParent>
   );
 }
 
