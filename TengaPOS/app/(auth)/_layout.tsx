@@ -4,14 +4,14 @@ const AuthLayout = () => {
     return (
         <Stack>
             <Stack.Screen
-                name="(auth)/signin"
+                name="signin"
                 options={{
                     headerShown: false
                 }}
             />
 
             <Stack.Screen
-                name="(auth)/signup"
+                name="signup"
                 options={{
                     headerShown: false
                 }}
