@@ -4,6 +4,8 @@ import { View, Text, Pressable, TextInput, TouchableOpacity } from 'react-native
 import { MotiView } from 'moti'
 import { useState } from 'react'
 import Toast from 'react-native-root-toast'
+import axios from 'axios'
+import * as Store from "expo-secure-store";
 
 const SignIn = () => {
     const [businessEmail, setBusinessEmail] = useState('')
@@ -25,31 +27,33 @@ const SignIn = () => {
         }
 
         try {
-            setLoading(true)
+            setLoading(true);
+
+            const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/auth/signin`, { businessEmail, businessPassword });
+
+            if (response.status === 200) {
+                // Save the user's session
+                console.log("Data : ", response.data.business);
+
+                Store.setItem("session", JSON.stringify(response.data.business));
+
+                // Redirect to the home page
+                router.push("/(tabs)/home");
+            }
 
             // Placeholder for sign-in logic
             console.log('Signing in with:', businessEmail, businessPassword)
-
-            Toast.show('Sign in logic not implemented yet', {
-                containerStyle: {
-                    backgroundColor: 'orange'
-                },
-                textStyle: {
-                    color: 'white',
-                    fontWeight: '500'
-                }
-            })
-
         } catch (e: any) {
-            Toast.show('Something went wrong', {
+            console.log(e.response)
+            Toast.show(e.response.data.message, {
                 containerStyle: {
-                    backgroundColor: 'red'
+                    backgroundColor: "red"
                 },
                 textStyle: {
-                    color: 'white',
-                    fontWeight: '500'
+                    color: "white",
+                    fontWeight: "500"
                 }
-            })
+            });
         } finally {
             setLoading(false)
         }

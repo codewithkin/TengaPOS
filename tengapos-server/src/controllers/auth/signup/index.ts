@@ -24,22 +24,24 @@ export default async function signUp(c: Context) {
 
         if (businessExists) {
             return c.json({
-                message: "Business already exists",
+                message: "Business already exists, please sign in",
                 success: false
             }, 400);
         }
+
+        const hashedPassword = await Bun.password.hash(password);
 
         if (businessLogo) {
             data.ownerName = ownerName;
             data.businessName = businessName;
             data.businessEmail = businessEmail;
             data.businessLogo = businessLogo;
-            data.password = Bun.password.hash(password);
+            data.password = hashedPassword;
         } else {
             data.ownerName = ownerName;
             data.businessName = businessName;
             data.businessEmail = businessEmail;
-            data.password = password
+            data.password = hashedPassword;
         }
 
         // Create a new user in the db

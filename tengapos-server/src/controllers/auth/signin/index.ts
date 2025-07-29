@@ -6,7 +6,7 @@ export default async function signIn(c: Context) {
         // Get the business email and password
         const {
             businessEmail,
-            password
+            businessPassword: password
         } = await c.req.json();
 
         // Find the business
@@ -28,7 +28,7 @@ export default async function signIn(c: Context) {
 
         if (!correctPassword) {
             return c.json({
-                message: "Password is incorrect",
+                message: "Incorrect email or password",
                 success: false
             }, 400);
         };
@@ -63,7 +63,7 @@ export default async function signIn(c: Context) {
         console.log("An error occured while signing you in: ", e);
 
         return c.json({
-            message: "An error occured while signing user in",
+            message: "An error occured while signing you in",
         }, 500)
     }
 }
