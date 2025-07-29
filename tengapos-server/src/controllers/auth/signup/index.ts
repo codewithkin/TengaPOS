@@ -18,7 +18,7 @@ export default async function signUp(c: Context) {
 
         const businessExists = await prisma.business.findFirst({
             where: {
-                businessName
+                businessEmail
             }
         });
 
