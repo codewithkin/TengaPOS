@@ -33,9 +33,6 @@ export default function RootLayout() {
         key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
         style={isDarkColorScheme ? 'light' : 'dark'}
       />
-      {/* WRAP YOUR APP WITH ANY ADDITIONAL PROVIDERS HERE */}
-      {/* <ExampleProvider> */}
-
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
           <ActionSheetProvider>
@@ -48,20 +45,16 @@ export default function RootLayout() {
           </ActionSheetProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
-
-      {/* </ExampleProvider> */}
     </>
   );
 }
 
 const SCREEN_OPTIONS = {
-  animation: 'ios_from_right', // for android
+  animation: 'ios_from_right',
 } as const;
 
 const INDEX_OPTIONS = {
-  headerLargeTitle: true,
-  title: 'NativeWindUI',
-  headerRight: () => <SettingsIcon />,
+  headerShown: false
 } as const;
 
 function SettingsIcon() {
