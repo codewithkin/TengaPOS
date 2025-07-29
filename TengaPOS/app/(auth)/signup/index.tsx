@@ -6,7 +6,7 @@ import { useState } from 'react'
 import Toast from 'react-native-root-toast';
 import axios, { AxiosError } from "axios"
 
-const SignIn = () => {
+const SignUp = () => {
     const [ownerName, setOwnerName] = useState('')
     const [businessName, setBusinessName] = useState('')
     const [businessEmail, setBusinessEmail] = useState('')
@@ -144,4 +144,4 @@ const SignIn = () => {
     )
 }
 
-export default SignIn
+export default SignUp
