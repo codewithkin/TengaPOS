@@ -35,6 +35,10 @@ const SignIn = () => {
 
             console.log("Data: ", response.data);
 
+            if (response.status === 200) {
+                Toast.show("Business registered successfully ! Please check your email");
+            }
+
             return response.data;
         } catch (e: any) {
             Toast.show(e.response.data.message, {
