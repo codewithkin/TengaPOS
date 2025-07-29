@@ -42,7 +42,7 @@ const StepWrapper = ({
 const StepOne = () => (
   <StepWrapper
     centerContent={
-      <View className="rounded-full light:bg-gray-200 dark:bg-slate-600 p-8 justify-center items-center">
+      <View className="rounded-full bg-slate-600 p-8 justify-center items-center">
         <StoreIcon color="orange" strokeWidth={1.2} size={100} />
       </View>
     }
@@ -86,7 +86,7 @@ const StepTwoCenterContent = () => {
             duration: 400,
             delay: index * 200,
           }}
-          className="rounded-xl shadow-md flex flex-row justify-between w-full gap-4 items-center dark:bg-white p-4"
+          className="rounded-xl shadow-md flex flex-row justify-between w-full gap-4 items-center dark:bg-white bg-slate-300 p-4"
         >
           <View className={`rounded-full p-4 ${item.bg} w-14 h-14 flex justify-center items-center`}>
             {item.icon}
@@ -193,7 +193,7 @@ const MainPage = () => {
         </View>
 
         {/* Navigation Buttons */}
-        <View className="w-full flex-row justify-between gap-3">
+        <View className="w-full flex-row justify-between gap-3 px-4">
           {/* Back / Skip */}
           <TouchableOpacity
             onPress={currentStep > 0 ? prevStep : skip}
