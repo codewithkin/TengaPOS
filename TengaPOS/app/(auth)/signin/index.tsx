@@ -10,17 +10,6 @@ const SignIn = () => {
     const [businessName, setBusinessName] = useState('')
     const [businessEmail, setBusinessEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [businessLogo, setBusinessLogo] = useState<string | null>(null)
-
-    const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
-        })
-        if (!result.canceled && result.assets.length > 0) {
-            setBusinessLogo(result.assets[0].uri)
-        }
-    }
 
     return (
         <View className="h-full w-full dark:bg-green-900 bg-green-600 flex flex-col justify-between">
@@ -28,7 +17,7 @@ const SignIn = () => {
             <View className="flex flex-row justify-between items-center px-2 pt-12">
                 <Pressable
                     onPress={() => router.back()}
-                    className="dark:bg-black bg-white p-2 rounded-lg"
+                    className="dark:bg-slate-600 bg-white p-2 rounded-lg"
                 >
                     <ChevronLeft className="dark:stroke-white stroke-green-900" />
                 </Pressable>
@@ -39,7 +28,7 @@ const SignIn = () => {
                 from={{ translateY: 500 }}
                 animate={{ translateY: 0 }}
                 transition={{ type: 'timing', duration: 600 }}
-                className="bg-white dark:bg-black rounded-tr-3xl rounded-tl-3xl h-3/4 px-4 py-8"
+                className="bg-white dark:bg-slate-600 rounded-tr-3xl rounded-tl-3xl h-3/4 px-4 py-8"
             >
                 <View className="flex flex-col gap-1">
                     <Text className="text-2xl dark:text-white font-semibold text-center mb-6">
@@ -86,7 +75,7 @@ const SignIn = () => {
                     {/* Sign In Button */}
                     <TouchableOpacity
                         onPress={() => console.log('Submit')}
-                        className="bg-green-600 dark:bg-green-700 dark:disabled:bg-green-900 disabled:bg-green-800 rounded-xl py-4"
+                        className="bg-green-600 dark:bg-green-700 dark:disabled:bg-green-900 disabled:bg-green-800 rounded-xl py-3"
                     >
                         <Text className="text-white text-center font-semibold text-lg">Sign Up</Text>
                     </TouchableOpacity>
