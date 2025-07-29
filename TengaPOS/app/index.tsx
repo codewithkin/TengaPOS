@@ -68,7 +68,7 @@ const MainPage = () => {
       const onboardingCompleted = await Store.getItemAsync('onboardingCompleted');
 
       if (session) return router.replace('/(tabs)/home');
-      if (onboardingCompleted) return router.replace('/(auth)/signin');
+      // if (onboardingCompleted) return router.replace('/(auth)/signin');
     };
 
     checkSession();
@@ -79,7 +79,7 @@ const MainPage = () => {
       setCurrentStep(currentStep + 1);
     } else {
       await Store.setItemAsync('onboardingCompleted', 'true');
-      router.replace('/(auth)/signin');
+      // router.replace('/(auth)/signin');
     }
   };
 
@@ -100,6 +100,14 @@ const MainPage = () => {
 
       {/* Footer Actions */}
       <View className="w-full items-center mt-4">
+        <View className="flex flex-row gap-2 mb-6">
+          {steps.map((_, i) => (
+            <View
+              key={i}
+              className={`w-2.5 h-2.5 rounded-full ${currentStep === i ? 'bg-green-600' : 'bg-gray-400'}`}
+            />
+          ))}
+        </View>
         <TouchableOpacity
           onPress={nextStep}
           className="bg-green-600 px-6 py-3 rounded-xl w-full flex items-center justify-center"
@@ -108,15 +116,6 @@ const MainPage = () => {
             {currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
           </Text>
         </TouchableOpacity>
-
-        <View className="flex flex-row gap-2 mt-6">
-          {steps.map((_, i) => (
-            <View
-              key={i}
-              className={`w-2.2 h-2.2 rounded-full ${currentStep === i ? 'bg-green-600' : 'bg-gray-400'}`}
-            />
-          ))}
-        </View>
       </View>
     </View>
   );
