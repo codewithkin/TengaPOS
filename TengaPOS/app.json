@@ -3,7 +3,7 @@
     "name": "TengaPOS",
     "slug": "TengaPOS",
     "version": "1.0.0",
-    "scheme": "TengaPOS",
+    "scheme": "tengapos",
     "web": {
       "bundler": "metro",
       "output": "static",

@@ -25,7 +25,7 @@ export default async function VerifyEmail(c: Context) {
                 }
             });
 
-            return c.redirect("TengaPOS://");
+            return c.redirect("tengapos://(auth)");
         }
 
         // Find the verification token
