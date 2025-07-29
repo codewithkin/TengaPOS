@@ -5,7 +5,7 @@ import { View, Text, Pressable } from 'react-native'
 
 const EmailVerified = () => {
     return (
-        <View className="w-full flex flex-col h-full justify-center items-center gap-4">
+        <View className="w-full flex flex-col h-full justify-center items-center gap-4 p-4">
             <Stack.Screen
                 options={{
                     headerShown: false
