@@ -36,7 +36,15 @@ const SignIn = () => {
             console.log("Data: ", response.data);
 
             if (response.status === 200) {
-                Toast.show("Business registered successfully ! Please check your email");
+                Toast.show("Business registered successfully ! Please check your email", {
+                    containerStyle: {
+                        backgroundColor: "green"
+                    },
+                    textStyle: {
+                        color: "white",
+                        fontWeight: "600"
+                    }
+                });
             }
 
             return response.data;

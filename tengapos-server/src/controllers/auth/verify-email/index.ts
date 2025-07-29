@@ -25,10 +25,7 @@ export default async function VerifyEmail(c: Context) {
                 }
             });
 
-            return c.json({
-                message: "Business account verified successfully",
-                success: true
-            }, 200)
+            return c.redirect("TengaPOS://");
         }
 
         // Find the verification token
@@ -48,7 +45,7 @@ export default async function VerifyEmail(c: Context) {
             }
         });
 
-        return c.redirect("myapp://web-app.com/product");
+        return c.redirect("TengaPOS://");
     } catch (e) {
         console.log("An error occured while verfying the user's email: ", e);
 
