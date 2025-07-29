@@ -1,4 +1,4 @@
-import { Link, router } from 'expo-router'
+import { Link, router, Stack } from 'expo-router'
 import { ChevronLeft } from 'lucide-react-native'
 import { View, Text, Pressable, TextInput, TouchableOpacity } from 'react-native'
 import { MotiView } from 'moti'
@@ -136,7 +136,7 @@ const SignIn = () => {
                     </TouchableOpacity>
 
                     <Text className="flex flex-col justify-center items-center text-center dark:text-gray-300">
-                        Already have an account ? <Link className="font-semibold underline text-green-600 dark:text-green-900" href="/(auth)/signin">Sign In</Link>
+                        Already have an account ? <Link className="font-semibold underline text-green-600 dark:text-green-800" href="/(auth)/signin">Sign In</Link>
                     </Text>
                 </View>
             </MotiView>

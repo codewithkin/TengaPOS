@@ -140,7 +140,7 @@ const MainPage = () => {
       const session = await Store.getItemAsync('session');
       const onboardingCompleted = await Store.getItemAsync('onboardingCompleted');
       if (session) return router.replace('/(tabs)/home');
-      if (onboardingCompleted) return router.replace('/(auth)/signin');
+      if (onboardingCompleted) return router.replace('/(auth)/signup');
     };
     checkSession();
   }, []);
@@ -150,7 +150,7 @@ const MainPage = () => {
       setCurrentStep(currentStep + 1);
     } else {
       await Store.setItemAsync('onboardingCompleted', 'true');
-      router.replace('/(auth)/signin');
+      router.replace('/(auth)/signup');
     }
   };
 
@@ -160,7 +160,7 @@ const MainPage = () => {
 
   const skip = async () => {
     await Store.setItemAsync('onboardingCompleted', 'true');
-    router.replace('/(auth)/signin');
+    router.replace('/(auth)/signup');
   };
 
   return (
