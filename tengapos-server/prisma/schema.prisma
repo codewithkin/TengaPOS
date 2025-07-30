@@ -85,6 +85,7 @@ model Customer {
   phone        String?
 
   totalSpent   Float    @default(0)
+  totalSpentZig   Float    @default(0)
 
   businessId   String
   business     Business @relation(fields: [businessId], references: [id])
