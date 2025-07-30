@@ -8,6 +8,8 @@ import getCustomers from "../controllers/customers/getCustomers";
 import createCustomer from "../controllers/customers/createCustomer";
 import createSale from "../controllers/sales/createSale";
 import deleteCustomer from "../controllers/customers/deleteCustomer";
+import upgradePlan from "../controllers/payments/initializePayment";
+import initializePayment from "../controllers/payments/initializePayment";
 export const routes = new Hono();
 
 /* Auth routes */
@@ -35,3 +37,6 @@ routes.post("/customers", createCustomer);
 
 // Sale routes
 routes.post("/sale", createSale);
+
+// Payment routes
+routes.post("/payments/initialize", initializePayment);
