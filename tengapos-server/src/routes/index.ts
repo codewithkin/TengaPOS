@@ -7,6 +7,7 @@ import createProduct from "../controllers/products/createProduct";
 import getCustomers from "../controllers/customers/getCustomers";
 import createCustomer from "../controllers/customers/createCustomer";
 import createSale from "../controllers/sales/createSale";
+import deleteCustomer from "../controllers/customers/deleteCustomer";
 export const routes = new Hono();
 
 /* Auth routes */
@@ -29,6 +30,7 @@ routes.delete("/products", createProduct);
 
 /* Customer routes */
 routes.get("/customers", getCustomers);
+routes.delete("/customers", deleteCustomer);
 routes.post("/customers", createCustomer);
 
 // Sale routes
