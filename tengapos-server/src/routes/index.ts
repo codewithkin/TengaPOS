@@ -20,3 +20,6 @@ routes.post("/products", createProduct);
 
 // Edit product
 routes.put("/products", createProduct);
+
+// Delete product
+routes.delete("/products", createProduct);

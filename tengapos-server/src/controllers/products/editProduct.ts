@@ -29,6 +29,20 @@ export default async function editProduct(c: Context) {
             }, 400);
         }
 
+        // Check if the product exists
+        const product = await prisma.product.findUnique({
+            where: {
+                id: productId
+            }
+        });
+
+        // Throw an error if the product doesn't exist
+        if (!product) {
+            return c.json({
+                message: "This product doesn't exist"
+            }, 400);
+        }
+
         // edit the product
         await prisma.product.update({
             where: {
@@ -50,10 +64,10 @@ export default async function editProduct(c: Context) {
             message: "editd product " + productName + " successfully !"
         });
     } catch (e) {
-        console.log("An errror occured while creating this product: ", e);
+        console.log("An errror occured while editing this product: ", e);
 
         return c.json({
-            message: "An errror occured while creating your product"
+            message: "An errror occured while editing your product"
         }, 500);
     }
 }
