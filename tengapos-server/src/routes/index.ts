@@ -4,6 +4,8 @@ import VerifyEmail from "../controllers/auth/verify-email";
 import signIn from "../controllers/auth/signin";
 import getAllProducts from "../controllers/products/getAllProducts";
 import createProduct from "../controllers/products/createProduct";
+import getCustomers from "../controllers/customers/getCustomers";
+import createCustomer from "../controllers/customers/createCustomer";
 export const routes = new Hono();
 
 /* Auth routes */
@@ -23,3 +25,7 @@ routes.put("/products", createProduct);
 
 // Delete product
 routes.delete("/products", createProduct);
+
+/* Customer routes */
+routes.get("/customers", getCustomers);
+routes.post("/customers", createCustomer);
