@@ -14,6 +14,8 @@ export default function PaymentsPage() {
 
     const [showContent, setShowContent] = useState(false);
 
+    
+
     useEffect(() => {
         if (success === "true") {
             setShowContent(true);
