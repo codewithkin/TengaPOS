@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 export default function PaymentsPage() {
     const searchParams = useSearchParams();
     const success = searchParams.get("success");
+    const plan = searchParams.get("plan");
     const email = searchParams.get("email");
 
     const [showContent, setShowContent] = useState(false);
@@ -24,7 +25,7 @@ export default function PaymentsPage() {
     // Handler for the CTA button
     function openMobileApp() {
         // This can be your app's universal link or scheme to open the app
-        window.location.href = "myapp://home";
+        window.location.href = `tengapos://payments/upgrade?plan=${plan}`;
     }
 
     return (
@@ -39,9 +40,9 @@ export default function PaymentsPage() {
                     initial={{ y: -30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="text-green-600 mb-6"
+                    className="text-green-500 mb-6 w-full flex flex-col justify-center items-center"
                 >
-                    <CheckCircle2 size={72} />
+                    <CheckCircle2 strokeWidth={1.5} size={80} />
                 </motion.div>
 
                 <motion.h1
@@ -59,7 +60,7 @@ export default function PaymentsPage() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
                 >
-                    Your account <span className="font-medium">{email}</span> has been upgraded successfully.
+                    Your account <span className="font-medium text-yellow-500">{email}</span> has been upgraded successfully.
                     You can now open the mobile app to continue.
                 </motion.p>
 
@@ -68,7 +69,7 @@ export default function PaymentsPage() {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.5 }}
                 >
-                    <Button onClick={openMobileApp} size="lg" variant="default">
+                    <Button className="bg-green-600 hover:bg-green-700 transition duration-200" onClick={openMobileApp} size="lg" variant="default">
                         Open Mobile App
                     </Button>
                 </motion.div>
