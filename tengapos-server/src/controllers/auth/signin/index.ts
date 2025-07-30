@@ -23,6 +23,16 @@ export default async function signIn(c: Context) {
             }, 400);
         }
 
+        // Check if the account is verified
+        const verified = business.verified;
+
+        if (!verified) {
+            return c.json({
+                message: "Please verify your ccount",
+                success: false
+            }, 400);
+        };
+
         // Check if the password is correct
         const correctPassword = await Bun.password.verify(password, business?.password);
 
