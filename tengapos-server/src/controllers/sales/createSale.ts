@@ -8,7 +8,7 @@ export default async function createSale(c: Context) {
         const businessId = c.req.query("businessId") || "";
 
         // Get the sale data
-        const {
+        let {
             productIds,
             name,
             phone,
@@ -16,6 +16,8 @@ export default async function createSale(c: Context) {
             zigTotal,
             paymentType,
         } = await c.req.json();
+
+        total = parseInt(total);
 
         // Find out if the business exists
         const business = await prisma.business.findUnique({
@@ -58,6 +60,22 @@ export default async function createSale(c: Context) {
                 },
             },
         }) as any[];
+
+        // Update the customer's spent
+        await prisma.customer.update({
+            data: {
+                totalSpent: {
+                    increment: {
+                        total
+                    }
+                },
+                totalSpentZig: {
+                    increment: {
+                        zigTotal
+                    }
+                }
+            }
+        })
 
         // Create the sale
         const sale = await prisma.sale.create({
