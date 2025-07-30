@@ -1,15 +1,23 @@
-import { ShoppingBag, User } from 'lucide-react-native'
+import { ChevronDown, ShoppingBag, User } from 'lucide-react-native'
+import { useState } from 'react';
 import { View, Text } from 'react-native'
-import CurrencyPicker from '~/components/home/CurrencyPicker';
 
 const Home = () => {
+    const [currency, setCurrency] = useState<"USD" | "zIg">("USD");
+
+    const zigAmount = "12,000";
+    const usdAmount = "400";
 
     return (
         <View className="px-2 py-12 flex flex-col gap-8">
             <View className="flex flex-col justify-center items-center mt-8">
                 <Text className="text-gray-400">Total Received</Text>
                 <Text className="dark:text-white text-5xl text-center">$4,000.00</Text>
-                <CurrencyPicker />
+                <View className="w-full flex flex-col justify-center items-center my-4">
+                    <View className="flex flex-row gap-1 items-center border bg-yellow-500 border-slate-600 dark:border-slate-800 px-12 py-2 rounded-3xl">
+                        <Text className="text-slate-600 dark:text-slate-800">USD</Text>
+                    </View>
+                </View>
             </View>
 
             <View className="w-full flex flex-col gap-2">
