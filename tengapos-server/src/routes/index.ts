@@ -40,3 +40,5 @@ routes.post("/sale", createSale);
 
 // Payment routes
 routes.post("/payments/initialize", initializePayment);
+
+routes.post("/payments/upgrade", upgradePlan);

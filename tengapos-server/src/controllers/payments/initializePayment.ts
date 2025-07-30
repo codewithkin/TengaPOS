@@ -23,7 +23,7 @@ export default async function initializePayment(c: Context) {
         // Add the items to the cart
         payment.add(plan, numberPrice);
 
-        paynow.returnUrl = `${process.env.FRONTEND_URL}/payments?success=true&email=${businessEmail}`;
+        paynow.returnUrl = `${process.env.FRONTEND_URL}/payments?success=true&email=${businessEmail}&plan=${plan}`;
         paynow.resultUrl = `${process.env.FRONTEND_URL}/payments`;
 
         // Save the response from paynow in a variable
