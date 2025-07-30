@@ -2,9 +2,12 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "sonner";
 
 export default function PaymentsPage() {
     const searchParams = useSearchParams();
@@ -12,23 +15,37 @@ export default function PaymentsPage() {
     const plan = searchParams.get("plan");
     const email = searchParams.get("email");
 
-    const [showContent, setShowContent] = useState(false);
+    const [showSuccessCard, setShowSuccessCard] = useState(false);
+    const [showErrorCard, setShowErrorCard] = useState(false);
 
-    
+    const { isLoading, error } = useQuery({
+        queryKey: ["upgrade"],
+        queryFn: async () => {
+            const res = await axios.post(`${process.env.BACKEND_URL}/api/tengapos/payments/upgrade`, {
+                plan,
+                businessEmail: email
+            });
 
-    useEffect(() => {
-        if (success === "true") {
-            setShowContent(true);
-        }
-    }, [success]);
+            if (res.status === 200) {
+                toast.success("Plan upgraded successfully!");
+                setShowSuccessCard(true);
+            }
+        },
+        enabled: success === "true", // only run when redirected
+    });
 
-    if (!showContent) return null;
-
-    // Handler for the CTA button
     function openMobileApp() {
-        // This can be your app's universal link or scheme to open the app
         window.location.href = `tengapos://payments/upgrade?plan=${plan}`;
     }
+
+    useEffect(() => {
+        if (error) {
+            toast.error("Upgrade failed.");
+            setShowErrorCard(true);
+        }
+    }, [error]);
+
+    if (!success) return null;
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -38,43 +55,91 @@ export default function PaymentsPage() {
                 transition={{ type: "spring", stiffness: 120, damping: 14 }}
                 className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full text-center"
             >
-                <motion.div
-                    initial={{ y: -30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-green-500 mb-6 w-full flex flex-col justify-center items-center"
-                >
-                    <CheckCircle2 strokeWidth={1.5} size={80} />
-                </motion.div>
+                {showSuccessCard && (
+                    <>
+                        <motion.div
+                            initial={{ y: -30, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-green-500 mb-6 flex justify-center"
+                        >
+                            <CheckCircle2 strokeWidth={1.5} size={80} />
+                        </motion.div>
 
-                <motion.h1
-                    className="text-3xl font-semibold mb-3"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                >
-                    Payment Successful!
-                </motion.h1>
+                        <motion.h1
+                            className="text-3xl font-semibold mb-3"
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            Payment Successful!
+                        </motion.h1>
 
-                <motion.p
-                    className="text-gray-700 mb-8"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                >
-                    Your account <span className="font-medium text-yellow-500">{email}</span> has been upgraded successfully.
-                    You can now open the mobile app to continue.
-                </motion.p>
+                        <motion.p
+                            className="text-gray-700 mb-8"
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            Your account <span className="font-medium text-yellow-500">{email}</span> has been upgraded successfully.
+                            You can now open the mobile app to continue.
+                        </motion.p>
 
-                <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                >
-                    <Button className="bg-green-600 hover:bg-green-700 transition duration-200" onClick={openMobileApp} size="lg" variant="default">
-                        Open Mobile App
-                    </Button>
-                </motion.div>
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            <Button
+                                className="bg-green-600 hover:bg-green-700 transition duration-200"
+                                onClick={openMobileApp}
+                                size="lg"
+                                variant="default"
+                            >
+                                Open Mobile App
+                            </Button>
+                        </motion.div>
+                    </>
+                )}
+
+                {showErrorCard && (
+                    <>
+                        <motion.div
+                            initial={{ y: -30, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-red-500 mb-6 flex justify-center"
+                        >
+                            <XCircle strokeWidth={1.5} size={80} />
+                        </motion.div>
+
+                        <motion.h1
+                            className="text-2xl font-semibold mb-3"
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            Something went wrong!
+                        </motion.h1>
+
+                        <motion.p
+                            className="text-gray-700 mb-8"
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            We couldn’t upgrade the plan for <span className="font-medium text-red-500">{email}</span>. <br />
+                            Please contact the developer for assistance:
+                            <br />
+                            <span className="block mt-2 font-semibold">
+                                📧 kinzinzombe07@gmail.com
+                            </span>
+                            <span className="block font-semibold">
+                                📞 +263 783 532 164
+                            </span>
+                        </motion.p>
+                    </>
+                )}
             </motion.div>
         </div>
     );
