@@ -64,7 +64,8 @@ model Product {
 
   inventory Int @default(0)
 
-  price        Float
+  price        Float @default(0)
+  zigPrice     Float @default(0)
   imageUrl     String?
   quantity     Int      @default(0)
 
@@ -98,6 +99,7 @@ model Sale {
   id           String   @id @default(uuid())
 
   total        Float
+  zigTotal     Float
 
   paymentType  String   // "cash", "mobile", "card", etc.
 
