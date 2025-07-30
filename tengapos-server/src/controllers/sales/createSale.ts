@@ -52,15 +52,6 @@ export default async function createSale(c: Context) {
             });
         }
 
-        // Get the products
-        const products = await prisma.product.findMany({
-            where: {
-                id: {
-                    in: productIds,
-                },
-            },
-        }) as any[];
-
         // Update the customer's spent
         await prisma.customer.update({
             data: {
