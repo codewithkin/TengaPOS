@@ -17,3 +17,6 @@ routes.get("/products", getAllProducts);
 
 // Create a new product
 routes.post("/products", createProduct);
+
+// Edit product
+routes.put("/products", createProduct);
