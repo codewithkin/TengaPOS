@@ -4,9 +4,7 @@ import { prisma } from "../helpers/prisma";
 export default async function getAllData(c: Context) {
     try {
         // Get the businessId from query params
-        const {
-            businessId
-        } = await c.req.json();
+        const businessId = c.req.query("businessId");
 
         // Find the business with the matching ID
         const business = await prisma.business.findUnique({

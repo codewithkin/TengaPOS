@@ -1,10 +1,14 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import axios from 'axios';
 import { ChevronDown, DollarSign, ShoppingBag, User, Wallet } from 'lucide-react-native'
-import { useCallback, useRef, useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import Toast from 'react-native-root-toast';
+import * as Store from "expo-secure-store";
 
 const Home = () => {
     const [currency, setCurrency] = useState<"USD" | "ZiG">("USD");
+    const [data, setData] = useState<null | any[]>(null);
 
     const amounts = {
         ZiG: "4,047.08",
@@ -13,12 +17,45 @@ const Home = () => {
 
     const [showCurrencyChooser, setCurrencyChooserShow] = useState<boolean>(false);
 
+    const getData = async () => {
+        try {
+            // Get the data
+            const res = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos?businessId=${business.id}`);
+
+            if (res.status === 200) {
+                setData(res.data);
+            } else {
+                Toast.show("Could not fetch your data");
+            }
+        } catch (e) {
+            console.log("An error occured while fetching data: ", e);
+
+            Toast.show("Could not fetch your data");
+        }
+    }
+
+    useEffect(() => {
+        (async () => {
+            await getData();
+        })();
+    }, []);
+
+    console.log("Data: ", data);
+
+    // Get the business' id;
+    const business = JSON.parse(Store.getItem("session") || "{}");
+
+    console.log("Business data: ", business);
+
     return (
         <View className="px-2 py-12 flex flex-col gap-8 h-full">
             <View className="flex flex-col justify-center items-center mb-4 gap-2">
                 <View className="flex flex-col gap-1">
                     <Text className="text-gray-400 text-center">Total Received</Text>
-                    <Text className="dark:text-white text-5xl text-center">${amounts[currency]}</Text>
+                    <Text className="dark:text-white text-5xl text-center">{
+                        data?.sales?.length === 0 ? "$0.00" : amounts[currency]
+                    }
+                    </Text>
                 </View>
 
                 <Pressable onPress={() => {
@@ -75,7 +112,7 @@ const Home = () => {
                             <Text className="text-white font-semibold text-md">Sales</Text>
                         </View>
 
-                        <Text className="text-white  p-2"><Text className="font-semibold text-3xl">121</Text><Text className="text-gray-300">total sales</Text></Text>
+                        <Text className="text-white  p-2"><Text className="font-semibold text-3xl">{data?.sales?.length}</Text><Text className="text-gray-300">total sales</Text></Text>
                     </View>
 
                     <View className="bg-indigo-600 rounded-3xl w-1/2 p-2">
@@ -86,7 +123,7 @@ const Home = () => {
                             <Text className="text-white font-semibold text-md">Customers</Text>
                         </View>
 
-                        <Text className="text-white  p-2"><Text className="font-semibold text-3xl">18</Text><Text className="text-gray-300">customers</Text></Text>
+                        <Text className="text-white  p-2"><Text className="font-semibold text-3xl">{data?.customers?.length}</Text><Text className="text-gray-300">customers</Text></Text>
                     </View>
                 </View>
 
@@ -95,7 +132,7 @@ const Home = () => {
                         <Text className="text-white font-semibold text-md">Products sold</Text>
                     </View>
 
-                    <Text className="text-white  p-2 font-semibold text-3xl">1,380</Text>
+                    <Text className="text-white  p-2 font-semibold text-3xl">{data?.products?.length}</Text>
                 </View>
             </View>
         </View >
