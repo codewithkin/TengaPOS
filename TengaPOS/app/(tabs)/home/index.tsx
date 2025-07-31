@@ -30,11 +30,17 @@ const Home = () => {
             if (res.status === 200) {
                 setData(res.data);
             } else {
-                Toast.show("Could not fetch your data");
+                Toast.show("Could not fetch your data", {
+                    backgroundColor: "red",
+                    textColor: "white"
+                });
             }
         } catch (e) {
             console.log("An error occurred while fetching data: ", e);
-            Toast.show("Could not fetch your data");
+            Toast.show("Could not fetch your data", {
+                backgroundColor: "red",
+                textColor: "white"
+            });
         } finally {
             setIsLoading(false);
         }

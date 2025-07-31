@@ -3,6 +3,7 @@ import { prisma } from "../../helpers/prisma";
 
 export default async function createProduct(c: Context) {
     try {
+
         // Get the product data and business data
         const {
             id: businessId,
@@ -13,6 +14,9 @@ export default async function createProduct(c: Context) {
             quantity,
             zigPrice
         } = await c.req.json();
+
+        const body = await c.req.parseBody()
+        console.log(body['file']) // File | string
 
         // Check if the business exists (not really necessary but good to prevent errors)
         const business = await prisma.business.findUnique({

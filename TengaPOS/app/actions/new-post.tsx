@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router'
-import { Upload } from 'lucide-react-native'
+import { Store, Upload } from 'lucide-react-native'
 import {
     View,
     Text,
@@ -12,11 +12,8 @@ import {
 import * as ImagePicker from 'expo-image-picker'
 import { useState } from 'react'
 import Toast from 'react-native-root-toast'
-
-const R2_BUCKET_NAME = 'tengapos-object-storage-ajcxq'
-const R2_ENDPOINT = 'https://f6d1d15e6f0b37b4b8fcad3c41a7922d.r2.cloudflarestorage.com'
-const R2_ACCESS_KEY = '0191009d0e80e1c4f036121122a4b058'
-const R2_SECRET_KEY = 'eeba2759e674ff54b04b446090e97651305008cec640476f1d2440c1e2721c7c'
+import axios from 'axios'
+import * as SecureStore from "expo-secure-store";
 
 const generateFilename = (type: string) => {
     const ext = type.split('/')[1]
@@ -30,73 +27,79 @@ const NewPost = () => {
     const [priceZIG, setPriceZIG] = useState('')
     const [stock, setStock] = useState('')
     const [imageUri, setImageUri] = useState<string | null>(null)
-    const [imageUrl, setImageUrl] = useState<string | null>(null)
+    const [imageType, setImageType] = useState<string | null>(null)
+    const [imageName, setImageName] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
-
-    const uploadToR2 = async (blob: Blob, filename: string) => {
-        const url = `${R2_ENDPOINT}/${R2_BUCKET_NAME}/${filename}`
-
-        const res = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': blob.type,
-                'x-amz-acl': 'public-read',
-                Authorization:
-                    'Basic ' +
-                    btoa(`${R2_ACCESS_KEY}:${R2_SECRET_KEY}`),
-            },
-            body: blob,
-        })
-
-        if (!res.ok) {
-            console.log(res);
-
-            throw new Error('Failed to upload image');
-        }
-
-        return `${R2_ENDPOINT}/${R2_BUCKET_NAME}/${filename}`
-    }
 
     const pickImage = async () => {
         try {
             const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ["images"],
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 quality: 1,
                 base64: false,
             })
 
-            if (!result.canceled && result.assets && result.assets[0]?.uri) {
-                const uri = result.assets[0].uri
-                setImageUri(uri)
-
-                const response = await fetch(uri)
-                const blob = await response.blob()
-
-                const filename = generateFilename(blob.type)
-
-                Toast.show('Uploading image...', { backgroundColor: '#444' })
-
-                const uploadedUrl = await uploadToR2(blob, filename)
-
-                setImageUrl(uploadedUrl)
-                Toast.show('Image uploaded successfully!', { backgroundColor: 'green' })
+            if (!result.canceled && result.assets && result.assets[0]) {
+                const asset = result.assets[0]
+                setImageUri(asset.uri)
+                setImageType(asset.type || 'image/jpeg')
+                setImageName(generateFilename(asset.type || 'image/jpeg'))
             }
         } catch (error) {
-            Toast.show('Image upload failed.', { backgroundColor: 'red' })
-            console.error('Upload error:', error)
+            Toast.show('Failed to pick image.', { backgroundColor: 'red' })
+            console.error('Image picker error:', error)
         }
     }
 
+
+    axios.post(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products`,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+    )
+
     const addProduct = async () => {
+        if (!productName || !priceUSD || !stock || !imageUri || !imageType || !imageName) {
+            Toast.show('Please fill all fields and select an image.', {
+                backgroundColor: 'red',
+            })
+            return
+        }
+
         setLoading(true)
 
         try {
-            // Simulated request
-            await new Promise((resolve) => setTimeout(resolve, 2000))
+            // Get the business' data
+            const id = JSON.parse(SecureStore.getItem("session") || "{}").id;
 
-            Toast.show('Product added successfully!', {
-                backgroundColor: 'green',
-            })
+            const formData = new FormData()
+            formData.append('productName', productName);
+            formData.append('id', id);
+            formData.append('description', description)
+            formData.append('priceUSD', priceUSD)
+            formData.append('priceZIG', priceZIG)
+            formData.append('stock', stock)
+
+            formData.append('image', {
+                uri: imageUri,
+                name: imageName,
+                type: imageType,
+            } as any)
+
+            await axios.post(
+                `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            )
+
+            Toast.show('Product added successfully!', { backgroundColor: 'green' })
 
             setProductName('')
             setDescription('')
@@ -104,8 +107,10 @@ const NewPost = () => {
             setPriceZIG('')
             setStock('')
             setImageUri(null)
-            setImageUrl(null)
+            setImageType(null)
+            setImageName(null)
         } catch (error) {
+            console.error('Add product error:', error)
             Toast.show('Failed to add product.', { backgroundColor: 'red' })
         } finally {
             setLoading(false)
@@ -126,7 +131,7 @@ const NewPost = () => {
                         placeholder="Product Name"
                         value={productName}
                         onChangeText={setProductName}
-                        className="bg-gray-300 dark:bg-gray-800 rounded-xl p-4"
+                        className="bg-gray-300 dark:bg-gray-800 dark:text-white rounded-xl p-4"
                     />
 
                     <TextInput
@@ -134,7 +139,7 @@ const NewPost = () => {
                         value={description}
                         onChangeText={setDescription}
                         multiline
-                        className="bg-gray-300 dark:bg-gray-800 rounded-xl p-4 min-h-[100px] text-start text-base"
+                        className="bg-gray-300 dark:text-white dark:bg-gray-800 rounded-xl p-4 min-h-[100px] text-start text-base"
                         textAlignVertical="top"
                     />
 
@@ -143,7 +148,7 @@ const NewPost = () => {
                         value={priceUSD}
                         onChangeText={setPriceUSD}
                         keyboardType="numeric"
-                        className="bg-gray-300 dark:bg-gray-800 rounded-xl p-4"
+                        className="bg-gray-300 dark:text-white dark:bg-gray-800 rounded-xl p-4"
                     />
 
                     <TextInput
@@ -151,7 +156,7 @@ const NewPost = () => {
                         value={priceZIG}
                         onChangeText={setPriceZIG}
                         keyboardType="numeric"
-                        className="bg-gray-300 dark:bg-gray-800 rounded-xl p-4"
+                        className="bg-gray-300 dark:text-white dark:bg-gray-800 rounded-xl p-4"
                     />
 
                     <TextInput
@@ -159,7 +164,7 @@ const NewPost = () => {
                         value={stock}
                         onChangeText={setStock}
                         keyboardType="numeric"
-                        className="bg-gray-300 dark:bg-gray-800 text-gray-600 rounded-xl p-4"
+                        className="bg-gray-300 dark:text-white dark:bg-gray-800 text-gray-600 rounded-xl p-4"
                     />
 
                     {!imageUri ? (
