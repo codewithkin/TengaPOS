@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { Upload } from 'lucide-react-native'
 import {
     View,
@@ -83,6 +83,10 @@ const NewProduct = () => {
             }
 
             Toast.show('Product added successfully!', { backgroundColor: 'green' })
+
+            setTimeout(() => {
+                router.push(`/products/${product.id}`);
+            }, 1000);
 
             setProductName('')
             setDescription('')
