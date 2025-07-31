@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router'
-import { Store, Upload } from 'lucide-react-native'
+import { Upload } from 'lucide-react-native'
 import {
     View,
     Text,
@@ -12,13 +12,7 @@ import {
 import * as ImagePicker from 'expo-image-picker'
 import { useState } from 'react'
 import Toast from 'react-native-root-toast'
-import axios from 'axios'
-import * as SecureStore from "expo-secure-store";
-
-const generateFilename = (type: string) => {
-    const ext = type.split('/')[1]
-    return `image_${Date.now()}_${Math.floor(Math.random() * 10000)}.${ext}`
-}
+import * as SecureStore from 'expo-secure-store'
 
 const NewProduct = () => {
     const [productName, setProductName] = useState('')
@@ -27,8 +21,7 @@ const NewProduct = () => {
     const [priceZIG, setPriceZIG] = useState('')
     const [stock, setStock] = useState('')
     const [imageUri, setImageUri] = useState<string | null>(null)
-    const [imageType, setImageType] = useState<string | null>(null)
-    const [imageName, setImageName] = useState<string | null>(null)
+    const [imageBase64, setImageBase64] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
 
     const pickImage = async () => {
@@ -36,14 +29,13 @@ const NewProduct = () => {
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 quality: 1,
-                base64: false,
+                base64: true,
             })
 
-            if (!result.canceled && result.assets && result.assets[0]) {
+            if (!result.canceled && result.assets[0]) {
                 const asset = result.assets[0]
                 setImageUri(asset.uri)
-                setImageType(asset.type || 'image/jpeg')
-                setImageName(generateFilename(asset.type || 'image/jpeg'))
+                setImageBase64(asset.base64 || null)
             }
         } catch (error) {
             Toast.show('Failed to pick image.', { backgroundColor: 'red' })
@@ -51,18 +43,8 @@ const NewProduct = () => {
         }
     }
 
-
-    axios.post(
-        `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products`,
-        {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        }
-    )
-
     const addProduct = async () => {
-        if (!productName || !priceUSD || !stock || !imageUri || !imageType || !imageName) {
+        if (!productName || !priceUSD || !stock || !imageBase64) {
             Toast.show('Please fill all fields and select an image.', {
                 backgroundColor: 'red',
             })
@@ -72,32 +54,33 @@ const NewProduct = () => {
         setLoading(true)
 
         try {
-            // Get the business' data
-            const id = JSON.parse(SecureStore.getItem("session") || "{}").id;
+            const session = await SecureStore.getItemAsync('session')
+            const id = JSON.parse(session || '{}').id
 
-            const formData = new FormData()
-            formData.append('productName', productName);
-            formData.append('id', id);
-            formData.append('description', description)
-            formData.append('priceUSD', priceUSD)
-            formData.append('priceZIG', priceZIG)
-            formData.append('stock', stock)
+            const payload = {
+                productName,
+                description,
+                priceUSD: parseFloat(priceUSD),
+                priceZIG: parseFloat(priceZIG || '0'),
+                stock: parseInt(stock, 10),
+                imageBase64,
+                userId: id,
+            }
 
-            formData.append('image', {
-                uri: imageUri,
-                name: imageName,
-                type: imageType,
-            } as any)
-
-            await axios.post(
+            const response = await fetch(
                 `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products`,
-                formData,
                 {
+                    method: 'POST',
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'application/json',
                     },
+                    body: JSON.stringify(payload),
                 }
             )
+
+            if (!response.ok) {
+                throw new Error(`Failed with status ${response.status}`)
+            }
 
             Toast.show('Product added successfully!', { backgroundColor: 'green' })
 
@@ -107,8 +90,7 @@ const NewProduct = () => {
             setPriceZIG('')
             setStock('')
             setImageUri(null)
-            setImageType(null)
-            setImageName(null)
+            setImageBase64(null)
         } catch (error) {
             console.error('Add product error:', error)
             Toast.show('Failed to add product.', { backgroundColor: 'red' })

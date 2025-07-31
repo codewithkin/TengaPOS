@@ -44,6 +44,7 @@
     "expo-system-ui": "~5.0.6",
     "expo-web-browser": "~14.2.0",
     "lucide-react-native": "^0.532.0",
+    "mime": "^4.0.7",
     "moti": "^0.30.0",
     "nativewind": "latest",
     "react": "19.0.0",

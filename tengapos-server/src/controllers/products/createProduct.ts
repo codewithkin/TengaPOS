@@ -16,7 +16,7 @@ export default async function createProduct(c: Context) {
         } = await c.req.json();
 
         const body = await c.req.parseBody()
-        console.log(body['file']) // File | string
+        console.log(body) // File | string
 
         // Check if the business exists (not really necessary but good to prevent errors)
         const business = await prisma.business.findUnique({
