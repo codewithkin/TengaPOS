@@ -58,13 +58,13 @@ const NewProduct = () => {
             const id = JSON.parse(session || '{}').id
 
             const payload = {
+                id,
                 productName,
                 description,
                 priceUSD: parseFloat(priceUSD),
                 priceZIG: parseFloat(priceZIG || '0'),
                 stock: parseInt(stock, 10),
                 imageBase64,
-                userId: id,
             }
 
             const response = await fetch(
