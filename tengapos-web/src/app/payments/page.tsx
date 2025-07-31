@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -21,9 +22,9 @@ export default function PaymentsPage() {
     const { isLoading, error } = useQuery({
         queryKey: ["upgrade"],
         queryFn: async () => {
-            const res = await axios.post(`${process.env.BACKEND_URL}/api/tengapos/payments/upgrade`, {
+            const res = await axios.post(`${process.env.NODE_ENV}/api/tengapos/payments/upgrade`, {
                 plan,
-                businessEmail: email
+                businessEmail: email,
             });
 
             if (res.status === 200) {
@@ -31,12 +32,8 @@ export default function PaymentsPage() {
                 setShowSuccessCard(true);
             }
         },
-        enabled: success === "true", // only run when redirected
+        enabled: success === "true",
     });
-
-    function openMobileApp() {
-        window.location.href = `tengapos://payments/upgrade?plan=${plan}`;
-    }
 
     useEffect(() => {
         if (error) {
@@ -44,6 +41,10 @@ export default function PaymentsPage() {
             setShowErrorCard(true);
         }
     }, [error]);
+
+    function openMobileApp() {
+        window.location.href = `tengapos://payments/upgrade?plan=${plan}`;
+    }
 
     if (!success) return null;
 
@@ -55,7 +56,18 @@ export default function PaymentsPage() {
                 transition={{ type: "spring", stiffness: 120, damping: 14 }}
                 className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full text-center"
             >
-                {showSuccessCard && (
+                {isLoading && (
+                    <>
+                        <div className="mb-6 flex justify-center">
+                            <Skeleton className="h-20 w-20 rounded-full" />
+                        </div>
+                        <Skeleton className="h-8 w-3/4 mx-auto mb-4" />
+                        <Skeleton className="h-16 w-full mb-6" />
+                        <Skeleton className="h-10 w-40 mx-auto" />
+                    </>
+                )}
+
+                {!isLoading && showSuccessCard && (
                     <>
                         <motion.div
                             initial={{ y: -30, opacity: 0 }}
@@ -102,7 +114,7 @@ export default function PaymentsPage() {
                     </>
                 )}
 
-                {showErrorCard && (
+                {!isLoading && showErrorCard && (
                     <>
                         <motion.div
                             initial={{ y: -30, opacity: 0 }}
