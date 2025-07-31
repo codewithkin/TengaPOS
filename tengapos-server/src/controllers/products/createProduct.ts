@@ -1,59 +1,58 @@
 import { Context } from "hono";
 import { prisma } from "../../helpers/prisma";
+import { uploadToSevalla } from "../../helpers/uploadToSevalla";
 
 export default async function createProduct(c: Context) {
     try {
-
-        // Get the product data and business data
         const {
             id: businessId,
             productName,
             productDescription,
             price,
-            imageUrl,
             quantity,
-            zigPrice
+            zigPrice,
+            imageBase64,
         } = await c.req.json();
 
-        const body = await c.req.parseBody()
-        console.log(body) // File | string
-
-        // Check if the business exists (not really necessary but good to prevent errors)
+        // Check if the business exists
         const business = await prisma.business.findUnique({
-            where: {
-                id: businessId
-            }
+            where: { id: businessId },
         });
 
-        // Throw an error if the business doesn't exist
         if (!business) {
-            return c.json({
-                message: "This business doesn't exist"
-            }, 400);
+            return c.json(
+                { message: "This business doesn't exist" },
+                400
+            );
         }
 
-        // Create the product
+        // Upload the image to Sevalla if base64 string is provided
+        let imageUrl = "";
+        if (imageBase64) {
+            imageUrl = await uploadToSevalla(imageBase64);
+        }
+
+        // Create the product with uploaded image URL
         await prisma.product.create({
             data: {
                 businessId,
                 name: productName,
                 description: productDescription,
                 price,
-                imageUrl,
                 quantity,
-                zigPrice
-            }
+                zigPrice,
+                imageUrl,
+            },
         });
 
-        // Return a success message
         return c.json({
-            message: "Created product " + productName + " successfully !"
+            message: `Created product ${productName} successfully!`,
         });
     } catch (e) {
-        console.log("An errror occured while creating this product: ", e);
-
-        return c.json({
-            message: "An errror occured while creating your product"
-        }, 500);
+        console.error("Error creating product:", e);
+        return c.json(
+            { message: "An error occurred while creating your product" },
+            500
+        );
     }
 }
