@@ -6,6 +6,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Toast from 'react-native-root-toast';
 import * as Store from "expo-secure-store";
 import { MotiView, AnimatePresence } from 'moti';
+import { router } from 'expo-router';
 
 const Home = () => {
     const [currency, setCurrency] = useState<"USD" | "ZiG">("USD");
@@ -178,7 +179,9 @@ const Home = () => {
             {/* Floating Add Button */}
             {
                 !isLoading && (
-                    <Pressable className="bg-green-600 rounded-full p-6 flex right-4 absolute bottom-4 flex-row gap-2 items-center self-start">
+                    <Pressable onPress={() => {
+                        router.push("/actions/new-post");
+                    }} className="bg-green-600 rounded-full p-6 flex right-4 absolute bottom-4 flex-row gap-2 items-center self-start">
                         <Plus className="w-fit" color="white" size={24} strokeWidth={2.2} />
                     </Pressable>
                 )
