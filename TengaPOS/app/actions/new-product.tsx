@@ -20,7 +20,7 @@ const generateFilename = (type: string) => {
     return `image_${Date.now()}_${Math.floor(Math.random() * 10000)}.${ext}`
 }
 
-const NewPost = () => {
+const NewProduct = () => {
     const [productName, setProductName] = useState('')
     const [description, setDescription] = useState('')
     const [priceUSD, setPriceUSD] = useState('')
@@ -212,4 +212,4 @@ const NewPost = () => {
     )
 }
 
-export default NewPost
+export default NewProduct

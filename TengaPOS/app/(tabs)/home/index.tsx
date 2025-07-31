@@ -1,6 +1,6 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import axios from 'axios';
-import { ChevronDown, DollarSign, Plus, ShoppingBag, User, Wallet } from 'lucide-react-native';
+import { ChevronDown, DollarSign, Package, Plus, ShoppingBag, User, Wallet } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import Toast from 'react-native-root-toast';
@@ -185,11 +185,20 @@ const Home = () => {
             {/* Floating Add Button */}
             {
                 !isLoading && (
-                    <Pressable onPress={() => {
-                        router.push("/actions/new-post");
-                    }} className="bg-green-600 rounded-full p-6 flex right-4 absolute bottom-4 flex-row gap-2 items-center self-start">
-                        <Plus className="w-fit" color="white" size={24} strokeWidth={2.2} />
-                    </Pressable>
+                    <View className="flex flex-col gap-2 items-center right-4 absolute bottom-4 ">
+                        <Pressable onPress={() => {
+                            router.push("/actions/new-product");
+                        }} className="bg-indigo-600 rounded-full p-4 w-full flex flex-row gap-2 items-center self-start">
+                            <Package className="w-fit" color="white" size={18} strokeWidth={1.8} />
+                            <Text className="text-white font-medium text-sm">Add product</Text>
+                        </Pressable>
+                        <Pressable onPress={() => {
+                            router.push("/actions/new-sale");
+                        }} className="bg-green-600 rounded-full p-4 flex flex-row gap-2 items-center self-start w-full">
+                            <Plus className="w-fit" color="white" size={24} strokeWidth={2.2} />
+                            <Text className="text-white font-medium text-base">New sale</Text>
+                        </Pressable>
+                    </View>
                 )
             }
         </View>
