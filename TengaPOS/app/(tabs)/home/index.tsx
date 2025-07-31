@@ -1,23 +1,68 @@
-import { ChevronDown, ShoppingBag, User } from 'lucide-react-native'
-import { useState } from 'react';
-import { View, Text } from 'react-native'
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { ChevronDown, DollarSign, ShoppingBag, User, Wallet } from 'lucide-react-native'
+import { useCallback, useRef, useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native'
 
 const Home = () => {
-    const [currency, setCurrency] = useState<"USD" | "zIg">("USD");
+    const [currency, setCurrency] = useState<"USD" | "ZiG">("USD");
 
-    const zigAmount = "12,000";
-    const usdAmount = "400";
+    const amounts = {
+        ZiG: "4,047.08",
+        USD: "400.30"
+    }
+
+    const [showCurrencyChooser, setCurrencyChooserShow] = useState<boolean>(false);
 
     return (
-        <View className="px-2 py-12 flex flex-col gap-8">
-            <View className="flex flex-col justify-center items-center mt-8">
-                <Text className="text-gray-400">Total Received</Text>
-                <Text className="dark:text-white text-5xl text-center">$4,000.00</Text>
-                <View className="w-full flex flex-col justify-center items-center my-4">
-                    <View className="flex flex-row gap-1 items-center border bg-yellow-500 border-slate-600 dark:border-slate-800 px-12 py-2 rounded-3xl">
-                        <Text className="text-slate-600 dark:text-slate-800">USD</Text>
-                    </View>
+        <View className="px-2 py-12 flex flex-col gap-8 h-full">
+            <View className="flex flex-col justify-center items-center mb-4 gap-2">
+                <View className="flex flex-col gap-1">
+                    <Text className="text-gray-400 text-center">Total Received</Text>
+                    <Text className="dark:text-white text-5xl text-center">${amounts[currency]}</Text>
                 </View>
+
+                <Pressable onPress={() => {
+                    if (showCurrencyChooser) {
+                        setCurrencyChooserShow(false);
+                    } else {
+                        setCurrencyChooserShow(true);
+                    }
+                }} className={`flex flex-row gap-1 items-center border ${currency === "USD" ? "bg-green-600" : "bg-indigo-500"} border-slate-600 dark:border-gray-400 px-12 py-2 rounded-3xl`}>
+                    <Text className="text-slate-600 dark:text-slate-800 font-semibold">{currency}</Text>
+                </Pressable>
+
+                {
+                    showCurrencyChooser && (
+                        <View className="top-28 w-full z-20 p-4 absolute bg-white rounded-3xl flex flex-col gap-2">
+                            <Text className="text-lg font-semibold">Select your currency</Text>
+                            <Pressable onPress={() => {
+                                setCurrency("USD");
+                                setCurrencyChooserShow(false);
+                            }} className="w-full bg-green-400 rounded-3xl py-2 px-4 flex flex-row items-center gap-4">
+                                <View className="p-4 rounded-full bg-white text-green-800">
+                                    <DollarSign strokeWidth={2.8} color="#166534" />
+                                </View>
+                                <View className="flex flex-col">
+                                    <Text className="font-semibold text-base text-green-800">USD</Text>
+                                    <Text className="text-xs text-slate-700">Show USD earnings</Text>
+                                </View>
+                            </Pressable>
+
+                            <Pressable onPress={() => {
+                                setCurrency("ZiG");
+                                setCurrencyChooserShow(false);
+                            }} className="w-full bg-indigo-500 rounded-3xl py-2 px-4 flex flex-row items-center gap-4">
+                                <View className="p-4 rounded-full bg-white text-indigo-800">
+                                    <Wallet strokeWidth={2.8} color="#3730a3" />
+                                </View>
+                                <View className="flex flex-col">
+                                    <Text className="font-semibold text-base text-indigo-900">ZiG</Text>
+                                    <Text className="text-xs text-slate-700">Show ZiG earnings</Text>
+                                </View>
+                            </Pressable>
+                        </View>
+                    )
+                }
             </View>
 
             <View className="w-full flex flex-col gap-2">
@@ -56,5 +101,17 @@ const Home = () => {
         </View >
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'grey',
+    },
+    contentContainer: {
+        flex: 1,
+        padding: 36,
+        alignItems: 'center',
+    },
+});
 
 export default Home
