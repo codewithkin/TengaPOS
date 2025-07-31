@@ -10,7 +10,11 @@ import createSale from "../controllers/sales/createSale";
 import deleteCustomer from "../controllers/customers/deleteCustomer";
 import upgradePlan from "../controllers/payments/initializePayment";
 import initializePayment from "../controllers/payments/initializePayment";
+import getAllData from "../controllers";
 export const routes = new Hono();
+
+// Get all data
+routes.get("/", getAllData);
 
 /* Auth routes */
 routes.post("/auth/signup", signUp);
