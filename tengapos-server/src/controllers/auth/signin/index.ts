@@ -49,6 +49,7 @@ export default async function signIn(c: Context) {
             },
             select: {
                 ownerName: true,
+                id: true,
                 businessName: true,
                 businessEmail: true,
                 businessLogo: true,
