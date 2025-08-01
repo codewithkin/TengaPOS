@@ -12,6 +12,7 @@ import upgradePlan from "../controllers/payments/initializePayment";
 import initializePayment from "../controllers/payments/initializePayment";
 import getAllData from "../controllers";
 import editProduct from "../controllers/products/editProduct";
+import searchForProduct from "../controllers/products/searchForProduct";
 export const routes = new Hono();
 
 // Get all data
@@ -28,6 +29,9 @@ routes.get("/products", getAllProducts);
 
 // Create a new product
 routes.post("/products", createProduct);
+
+// Search for a product
+routes.get("/products/search", searchForProduct);
 
 // Edit product
 routes.put("/products", editProduct);
