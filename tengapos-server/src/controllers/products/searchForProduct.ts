@@ -24,6 +24,8 @@ async function searchForProduct(c: Context) {
             }
         });
 
+        console.log(products);
+
         return c.json(products);
     } catch (error) {
         console.log('[PRODUCT_SEARCH_ERROR]', error);

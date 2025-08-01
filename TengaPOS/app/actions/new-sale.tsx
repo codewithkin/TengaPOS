@@ -5,13 +5,15 @@ import {
     ScrollView,
     Text,
     Dimensions,
-    Image
+    Image,
+    RefreshControl,
+    Pressable
 } from 'react-native';
-import { ImageIcon, Search } from 'lucide-react-native';
+import { ImageIcon, Search, SearchX } from 'lucide-react-native';
 import { Container } from '~/components/Container';
 import Toast from 'react-native-root-toast';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Product } from '~/types';
 import * as SecureStore from "expo-secure-store";
 import { MotiView } from 'moti';
@@ -36,15 +38,17 @@ const SkeletonCard = () => (
 const NewSale = () => {
     const [products, setProducts] = useState<Product[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>('');
+
+    const id = JSON.parse(SecureStore.getItem("session") || "{}").id;
 
     const getProducts = async () => {
         setLoading(true);
         setError(null);
 
         try {
-            const id = JSON.parse(SecureStore.getItem("session") || "{}").id;
             const res = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products?id=${id}`);
             setProducts(res.data);
         } catch (e) {
@@ -59,10 +63,6 @@ const NewSale = () => {
         }
     };
 
-    useEffect(() => {
-        getProducts();
-    }, []);
-
     const handleSearch = async (value: string) => {
         setSearchTerm(value);
         setLoading(true);
@@ -70,8 +70,12 @@ const NewSale = () => {
 
         try {
             const res = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products/search`, {
-                params: { searchTerm: value }
+                params: {
+                    searchTerm: value,
+                    id
+                }
             });
+
             setProducts(res.data);
         } catch (e) {
             console.error("Error during product search:", e);
@@ -85,10 +89,34 @@ const NewSale = () => {
         }
     };
 
-    console.log("Prudcts: ", products);
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        setSearchTerm('');
+        try {
+            const res = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products?id=${id}`);
+            setProducts(res.data);
+        } catch (e) {
+            console.error("Error refreshing products:", e);
+            Toast.show("Refresh failed", {
+                backgroundColor: "red",
+                textColor: "white"
+            });
+        } finally {
+            setRefreshing(false);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        getProducts();
+    }, []);
 
     return (
-        <ScrollView className="flex-1 bg-white dark:bg-black">
+        <ScrollView
+            className="flex-1 bg-white dark:bg-black"
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        >
             <Stack.Screen
                 options={{
                     headerTitle: "New Sale",
@@ -124,7 +152,18 @@ const NewSale = () => {
                         ))}
                     </View>
                 ) : products?.length === 0 ? (
-                    <Text className="text-gray-500 mt-2">No products found</Text>
+                    <View className="flex flex-col justify-center items-center h-full gap-1">
+                        <SearchX size={80} color="#6b7280" strokeWidth={1.2} />
+                        <Text className="text-gray-500 text-base mt-2">No products found</Text>
+                        <Pressable
+                            onPress={() => {
+                                onRefresh();
+                            }}
+                            disabled={refreshing}
+                            className="w-full bg-green-600 disabled:bg-green-800 p-4 rounded-xl mt-4 flex flex-col justify-center items-center">
+                            <Text className="text-white font-medium text-base">Refresh</Text>
+                        </Pressable>
+                    </View>
                 ) : (
                     <View className="flex-row flex-wrap justify-between items-center">
                         {products?.map(product => (
