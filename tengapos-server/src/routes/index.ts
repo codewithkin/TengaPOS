@@ -11,6 +11,7 @@ import deleteCustomer from "../controllers/customers/deleteCustomer";
 import upgradePlan from "../controllers/payments/initializePayment";
 import initializePayment from "../controllers/payments/initializePayment";
 import getAllData from "../controllers";
+import editProduct from "../controllers/products/editProduct";
 export const routes = new Hono();
 
 // Get all data
@@ -29,7 +30,7 @@ routes.get("/products", getAllProducts);
 routes.post("/products", createProduct);
 
 // Edit product
-routes.put("/products", createProduct);
+routes.put("/products", editProduct);
 
 // Delete product
 routes.delete("/products", createProduct);
