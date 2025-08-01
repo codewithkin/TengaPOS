@@ -36,7 +36,7 @@ export default async function getAllData(c: Context) {
         });
 
         // Products
-        const products = await prisma.sale.findMany({
+        const products = await prisma.product.findMany({
             where: {
                 businessId
             }
