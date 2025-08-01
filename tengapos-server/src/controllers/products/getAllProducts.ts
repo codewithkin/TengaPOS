@@ -5,6 +5,33 @@ export default async function getAllProducts(c: Context) {
     try {
         // Get the business's id
         const id = c.req.query("id");
+        const productId = c.req.query("productId");
+
+        if (productId) {
+            // Find the individual product 
+            const product = await prisma.product.findUnique({
+                where: {
+                    id: productId
+                },
+                include: {
+                    _count: {
+                        select: {
+                            sales: true
+                        }
+                    }
+                }
+            });
+
+            // Return an error if the product cannot be found
+            if (!product) {
+                return c.json({
+                    message: "Product does not exist"
+                }, 400);
+            }
+
+            // Return the product data
+            return c.json(product);
+        }
 
         // Find the business with that id
         const business = await prisma.business.findUnique({
@@ -24,6 +51,13 @@ export default async function getAllProducts(c: Context) {
         const products = await prisma.product.findMany({
             where: {
                 businessId: id
+            },
+            include: {
+                _count: {
+                    select: {
+                        sales: true
+                    }
+                }
             }
         });
 
