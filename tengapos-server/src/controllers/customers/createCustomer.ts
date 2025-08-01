@@ -3,13 +3,11 @@ import { prisma } from "../../helpers/prisma";
 
 export default async function createCustomer(c: Context) {
     try {
-        // Get the business id
-        const businessId = c.req.query("businessId");
-
         // get the customer's data
         const {
             name,
-            phone
+            phone,
+            id: businessId
         } = await c.req.json();
 
         // Find out if the business exists
@@ -35,6 +33,8 @@ export default async function createCustomer(c: Context) {
         if (phone) {
             customerData.phone = phone
         }
+
+        customerData.businessId = businessId;
 
         // Create the customer 
         const customers = await prisma.customer.create({
