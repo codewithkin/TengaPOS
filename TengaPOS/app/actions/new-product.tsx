@@ -117,6 +117,34 @@ const NewProduct = () => {
             />
             <ScrollView contentContainerStyle={{ padding: 16, paddingTop: 32 }} className="flex-grow">
                 <View className="flex flex-col gap-4">
+                    {!imageUri ? (
+                        <Pressable
+                            onPress={pickImage}
+                            className="p-4 rounded-xl border border-dashed border-gray-800 dark:border-gray-400 flex flex-col justify-center items-center gap-2 w-full"
+                        >
+                            <View className="flex flex-col justify-center items-center rounded-full p-4 bg-green-600 self-center">
+                                <Upload color="white" size={36} />
+                            </View>
+                            <View className="flex flex-col items-center justify-center">
+                                <Text className="text-gray-800 dark:text-white text-lg font-semibold">
+                                    Upload an image of the product
+                                </Text>
+                                <Text className="text-gray-600 dark:text-gray-400 text-xs">
+                                    Click <Text className="text-yellow-500 font-semibold">here</Text> to select an image from your gallery
+                                </Text>
+                            </View>
+                        </Pressable>
+                    ) : (
+                        <Pressable onPress={pickImage} className="w-full">
+                            <Image
+                                source={{ uri: imageUri }}
+                                className="w-full h-64 rounded-xl border border-gray-400"
+                                resizeMode="cover"
+                            />
+                            <Text className="text-center text-gray-500 text-xs mt-2">Tap to change image</Text>
+                        </Pressable>
+                    )}
+
                     <TextInput
                         placeholder="Product Name"
                         value={productName}
@@ -156,34 +184,6 @@ const NewProduct = () => {
                         keyboardType="numeric"
                         className="bg-gray-300 dark:text-white dark:bg-gray-800 text-gray-600 rounded-xl p-4"
                     />
-
-                    {!imageUri ? (
-                        <Pressable
-                            onPress={pickImage}
-                            className="p-4 rounded-xl border border-dashed border-gray-800 dark:border-gray-400 flex flex-col justify-center items-center gap-2 w-full"
-                        >
-                            <View className="flex flex-col justify-center items-center rounded-full p-4 bg-green-600 self-center">
-                                <Upload color="white" size={36} />
-                            </View>
-                            <View className="flex flex-col items-center justify-center">
-                                <Text className="text-gray-800 dark:text-white text-lg font-semibold">
-                                    Upload an image of the product
-                                </Text>
-                                <Text className="text-gray-600 dark:text-gray-400 text-xs">
-                                    Click <Text className="text-yellow-500 font-semibold">here</Text> to select an image from your gallery
-                                </Text>
-                            </View>
-                        </Pressable>
-                    ) : (
-                        <Pressable onPress={pickImage} className="w-full">
-                            <Image
-                                source={{ uri: imageUri }}
-                                className="w-full h-64 rounded-xl border border-gray-400"
-                                resizeMode="cover"
-                            />
-                            <Text className="text-center text-gray-500 text-xs mt-2">Tap to change image</Text>
-                        </Pressable>
-                    )}
 
                     <Pressable
                         onPress={addProduct}

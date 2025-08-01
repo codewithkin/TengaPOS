@@ -7,7 +7,7 @@ export default async function createProduct(c: Context) {
         const {
             id: businessId,
             productName,
-            productDescription,
+            description,
             price,
             quantity,
             zigPrice,
@@ -37,7 +37,7 @@ export default async function createProduct(c: Context) {
             data: {
                 businessId,
                 name: productName,
-                description: productDescription,
+                description,
                 price,
                 quantity,
                 zigPrice,
