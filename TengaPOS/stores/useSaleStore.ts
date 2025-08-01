@@ -6,6 +6,7 @@ type SaleData = {
     businessId: string;
     paymentMethod: string;
     setProductIds: (productIds: string[]) => void;
+    setPaymentMethod: (paymentMethod: string) => void;
     addProductId: (productId: string) => void;
     removeProductId: (productId: string) => void;
     setCustomerId: (customerId: string) => void;
