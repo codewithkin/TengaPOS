@@ -139,8 +139,8 @@ const MainPage = () => {
     const checkSession = async () => {
       const session = await Store.getItemAsync('session');
       const onboardingCompleted = await Store.getItemAsync('onboardingCompleted');
-      if (session) return router.replace('/(tabs)/home');
-      // if (session) return router.replace('/actions/new-sale');
+      // if (session) return router.replace('/(tabs)/home');
+      if (session) return router.replace('/modals/receipts/5cdf39c9-6e0a-45e9-b6f9-e656bf22d187');
       if (onboardingCompleted) return router.replace('/(auth)/signin');
     };
     checkSession();

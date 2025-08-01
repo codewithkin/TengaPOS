@@ -14,6 +14,7 @@ import getAllData from "../controllers";
 import editProduct from "../controllers/products/editProduct";
 import searchForProduct from "../controllers/products/searchForProduct";
 import { searchCustomer } from "../controllers/customers/searchCustomer";
+import getSale from "../controllers/sales/getSale";
 export const routes = new Hono();
 
 // Get all data
@@ -48,6 +49,7 @@ routes.post("/customers", createCustomer);
 
 // Sale routes
 routes.post("/sale", createSale);
+routes.get("/sale", getSale);
 
 // Payment routes
 routes.post("/payments/initialize", initializePayment);
