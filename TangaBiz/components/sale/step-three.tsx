@@ -14,9 +14,6 @@ interface StepThreeProps {
 }
 
 export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButton = true }) => {
-  // Sale data coming from the zustand store
-  const { productIds, customerId, paymentMethod, resetSale } = useSaleStore();
-
   // Local states
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [fetchingCustomer, setFetchingCustomer] = useState<boolean>(false);
@@ -24,15 +21,22 @@ export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButto
 
   const businessId = JSON.parse(SecureStore.getItem("session") || "{}").id;
 
+  // Get funcs to update the total and zigTotal
+  const { setTotal, setZigTotal } = useSaleStore(state => state);
+
+  // Get the sale data
+  const data = useSaleStore(state => state); 
+  console.log("data", data);
+
   // Fetch customer details when a customer was selected in step-two
   useEffect(() => {
     const fetchCustomer = async () => {
-      if (!customerId) return;
+      if (!data.customerId) return;
       try {
         setFetchingCustomer(true);
         const res = await axios.get(
           `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz/customers?id=${businessId}`,
-          { params: { customerId } }
+          { params: { customerId: data.customerId } }
         );
         setCustomer(res.data);
       } catch (e) {
@@ -43,12 +47,14 @@ export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButto
     };
 
     fetchCustomer();
-  }, [customerId, businessId]);
+  }, [data.customerId, businessId]);
 
   // Compute totals for USD and ZiG
   const { totalUsd, totalZig } = useMemo(() => {
     const usd = saleItems.reduce((acc, item) => acc + (item.price || 0), 0);
     const zig = saleItems.reduce((acc, item) => acc + (item.zigPrice || 0), 0);
+    setTotal(usd);
+    setZigTotal(zig);
     return { totalUsd: usd, totalZig: zig };
   }, [saleItems]);
 
@@ -71,17 +77,8 @@ export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButto
       await axios.post(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz/sale`,
         {
-          productIds,
-          name: customer?.name || "Guest",
-          phone: customer?.phone || "",
-          total: totalUsd,
-          zigTotal: totalZig,
-          paymentType: paymentMethod || "cash",
-        },
-        {
-          params: {
-            businessId,
-          },
+          ...data,
+          businessId
         }
       );
 
@@ -91,7 +88,7 @@ export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButto
       });
 
       // Reset the sale data so that a new sale can be started
-      resetSale();
+      data.resetSale();
     } catch (e) {
       console.error("Error recording sale:", e);
       Toast.show("Failed to record sale. Please try again.", {

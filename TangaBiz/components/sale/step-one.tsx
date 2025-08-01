@@ -109,13 +109,16 @@ export const StepOne = ({
     const toggleSaleItem = (product: Product) => {
         const exists = saleItems.find(item => item.id === product.id);
         if (exists) {
-            // Add to data
-            addProductId(product.id)
+            // Remove from data
+            removeProductId(product.id);
+
+            console.log("Removed product from sale data", product.id);
 
             setSaleItems(prev => prev.filter(item => item.id !== product.id));
         } else {
-            // Remove from data
-            removeProductId(product.id);
+                        // Add to data
+                        addProductId(product.id)
+                        console.log("Added product to sale data", product.id);
 
             setSaleItems(prev => [...prev, product]);
         }

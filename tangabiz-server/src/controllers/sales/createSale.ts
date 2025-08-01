@@ -5,16 +5,15 @@ import { prisma } from "../../helpers/prisma";
 export default async function createSale(c: Context) {
     try {
         // Get the business's id
-        const businessId = c.req.query("businessId") || "";
 
         // Get the sale data
-        let {
-            productIds,
-            customerId,
-            total,
-            zigTotal,
-            paymentType,
-        } = await c.req.json();
+        const data = await c.req.json();
+
+        const businessId = data.businessId;
+
+        let { productIds, customerId, total, zigTotal, paymentMethod } = data;
+
+        console.log(data);
 
         total = Number(total);
         zigTotal = Number(zigTotal);
@@ -64,7 +63,7 @@ export default async function createSale(c: Context) {
                 items: {
                     connect: productIds.map((id: string) => ({ id })),
                 },
-                paymentType
+                paymentType: paymentMethod
             },
         });
 

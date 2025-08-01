@@ -49,12 +49,7 @@ export default function NewSale() {
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     // Sale store data
-    const { productIds, customerId, paymentMethod, resetSale } = useSaleStore();
-
-    // You can add any other shared state or step 2/3 state here if needed
-
-    const totalUsd = saleItems.reduce((acc, item) => acc + (item.price || 0), 0);
-    const totalZig = saleItems.reduce((acc, item) => acc + (item.zigPrice || 0), 0);
+    const data = useSaleStore();
 
     const handleSaveSale = async () => {
         if (saving) return;
@@ -74,15 +69,8 @@ export default function NewSale() {
             await axios.post(
                 `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz/sale`,
                 {
-                    productIds,
-                    name: customerId || "Guest",
-                    phone: "", // phone can be fetched if needed
-                    total: totalUsd,
-                    zigTotal: totalZig,
-                    paymentType: paymentMethod || "cash",
-                },
-                {
-                    params: { businessId },
+                    ...data,
+                    businessId
                 }
             );
 
@@ -91,7 +79,7 @@ export default function NewSale() {
                 textColor: "white",
             });
 
-            resetSale();
+            data.resetSale();
             setCurrentStep(1);
             // Optionally navigate away or reset steps
             router.push("/(tabs)/home");
