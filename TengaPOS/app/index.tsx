@@ -140,7 +140,7 @@ const MainPage = () => {
       const session = await Store.getItemAsync('session');
       const onboardingCompleted = await Store.getItemAsync('onboardingCompleted');
       // if (session) return router.replace('/(tabs)/home');
-      if (session) return router.replace('/products/1af0c8fe-7e1c-45f8-af78-5c9296f2d983/edit');
+      if (session) return router.replace('/actions/new-sale');
       if (onboardingCompleted) return router.replace('/(auth)/signin');
     };
     checkSession();
