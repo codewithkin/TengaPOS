@@ -66,13 +66,15 @@ export default function NewSale() {
             const session = JSON.parse(SecureStore.getItem("session") || "{}");
             const businessId = session.id || "";
 
-            await axios.post(
+            const response = await axios.post(
                 `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz/sale`,
                 {
                     ...data,
                     businessId
                 }
             );
+
+            const saleId = response.data.saleId;
 
             Toast.show("Sale recorded successfully", {
                 backgroundColor: "green",
@@ -81,8 +83,8 @@ export default function NewSale() {
 
             data.resetSale();
             setCurrentStep(1);
-            // Optionally navigate away or reset steps
-            router.push("/(tabs)/home");
+
+            router.push(`/modals/receipts/${saleId}`);
         } catch (e) {
             console.error("Error recording sale:", e);
             Toast.show("Failed to record sale. Please try again.", {

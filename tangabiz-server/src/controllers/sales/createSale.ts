@@ -67,9 +67,10 @@ export default async function createSale(c: Context) {
             },
         });
 
+        // Return the sale id
         return c.json({
             message: "Sale completed !",
-            sale
+            saleId: sale.id
         })
     } catch (e) {
         console.log("An error occured while creating the sale: ", e);
