@@ -203,7 +203,7 @@ const StepTwo = () => {
 
                 {/* Payment Methods */}
                 <View className="flex flex-col w-full gap-4 py-4 mt-4">
-                    <Text className="font-semibold text-lg mb-2 ark:text-white">Payment Method</Text>
+                    <Text className="font-semibold text-lg mb-2 dark:text-white">Payment Method</Text>
                     {paymentMethods.map(({ id, label, value }) => (
                         <Pressable
                             key={id}
