@@ -30,8 +30,8 @@ export async function uploadToSevalla(base64String: string): Promise<string> {
 
     await s3file.write(buffer, { type: mimeType });
 
-    if (Bun.env.SEVALLA_ENDPOINT) {
-        const fileUrl = `${Bun.env.SEVALLA_ENDPOINT.replace(/\/$/, '')}/${fileName}`;
+    if (Bun.env.SEVALLA_PUBLIC_URL) {
+        const fileUrl = `${Bun.env.SEVALLA_PUBLIC_URL.replace(/\/$/, '')}/${fileName}`;
         return fileUrl;
     }
 
