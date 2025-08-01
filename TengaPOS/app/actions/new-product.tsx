@@ -61,8 +61,8 @@ const NewProduct = () => {
                 id,
                 productName,
                 description,
-                priceUSD: parseFloat(priceUSD),
-                priceZIG: parseFloat(priceZIG || '0'),
+                price: parseFloat(priceUSD),
+                zigPrice: parseFloat(priceZIG || '0'),
                 stock: parseInt(stock, 10),
                 imageBase64,
             }
