@@ -2,30 +2,25 @@ import { Context } from 'hono'
 import { prisma } from '../../helpers/prisma'
 
 export const searchCustomer = async (c: Context) => {
-    const searchTerm = c.req.query('searchTerm')?.trim()
+    let searchTerm = c.req.query('searchTerm')?.trim()
     const id = c.req.query('id')
 
     if (!searchTerm) {
-        return c.json({ error: 'searchTerm is required' }, 400)
+        console.log("SearchTerm is required");
+        searchTerm = "/";
     }
 
     try {
         const customers = await prisma.customer.findMany({
             where: {
-                ...(id && { id }),
-                OR: [
+                businessId: id,
+                AND: [
                     {
                         name: {
                             contains: searchTerm,
                             mode: 'insensitive',
                         },
-                    },
-                    {
-                        phone: {
-                            contains: searchTerm,
-                            mode: 'insensitive',
-                        },
-                    },
+                    }
                 ],
             },
             orderBy: {
@@ -33,7 +28,7 @@ export const searchCustomer = async (c: Context) => {
             },
         })
 
-        return c.json({ customers }, 200)
+        return c.json(customers)
     } catch (error) {
         console.error('Error searching customers:', error)
         return c.json({ error: 'Internal server error' }, 500)
