@@ -4,12 +4,12 @@ import { prisma } from "../../helpers/prisma";
 export default async function getCustomers(c: Context) {
     try {
         // Get the business's id
-        const businessId = c.req.query("businessId");
+        const id = c.req.query("id");
 
         // Find out if the business exists
         const business = await prisma.business.findUnique({
             where: {
-                id: businessId
+                id
             }
         });
 
@@ -24,7 +24,7 @@ export default async function getCustomers(c: Context) {
         // Get the customers
         const customers = await prisma.customer.findMany({
             where: {
-                businessId
+                businessId: id
             }
         });
 
