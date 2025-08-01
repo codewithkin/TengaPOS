@@ -173,7 +173,7 @@ const Home = () => {
 
                             <View className="bg-yellow-600 rounded-3xl p-2 w-full">
                                 <View className="w-full flex flex-row gap-2 items-center p-2">
-                                    <Text className="text-white font-semibold text-md">Products sold</Text>
+                                    <Text className="text-white font-semibold text-md">Products in inventory</Text>
                                 </View>
                                 <Text className="text-white p-2 font-semibold text-3xl">{data?.products?.length || 0}</Text>
                             </View>
