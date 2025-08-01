@@ -6,7 +6,7 @@ export default async function editProduct(c: Context) {
     try {
         const {
             productName,
-            productDescription,
+            description,
             price,
             quantity,
             zigPrice,
@@ -34,7 +34,7 @@ export default async function editProduct(c: Context) {
             where: { id },
             data: {
                 name: productName,
-                description: productDescription,
+                description,
                 price,
                 quantity,
                 zigPrice,
@@ -44,7 +44,7 @@ export default async function editProduct(c: Context) {
 
         return c.json({
             message: `Product "${updated.name}" updated successfully!`,
-            product: updated,
+            productId: updated.id,
         });
     } catch (e) {
         console.error("Error updating product:", e);

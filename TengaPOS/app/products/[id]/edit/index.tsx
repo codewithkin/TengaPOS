@@ -7,7 +7,7 @@ import Toast from 'react-native-root-toast'
 import { Upload } from 'lucide-react-native'
 
 const EditProduct = () => {
-    const { id } = useLocalSearchParams()
+    const { id } = useLocalSearchParams();
 
     const [productName, setProductName] = useState('')
     const [description, setDescription] = useState('')
@@ -79,10 +79,10 @@ const EditProduct = () => {
                 productId: id
             }
 
-            await axios.put(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products`, payload)
+            const res = await axios.put(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tengapos/products`, payload);
 
             Toast.show("Product updated successfully!", { backgroundColor: 'green' })
-            router.push("/(tabs)/home")
+            router.push(`/products/${res.data.productId}`);
         } catch (e) {
             console.error("Update error:", e)
             Toast.show("Failed to update product", { backgroundColor: 'red' })
@@ -142,7 +142,7 @@ const EditProduct = () => {
                 <TextInput
                     value={priceZIG}
                     onChangeText={setPriceZIG}
-                    placeholder="Price in ZIG (optional)"
+                    placeholder="Price in ZIG"
                     keyboardType="numeric"
                     className="border border-gray-300 px-4 py-3 rounded-xl text-base"
                 />
