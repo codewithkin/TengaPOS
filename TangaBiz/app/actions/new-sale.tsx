@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import {
     View,
     Text,
@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Product } from '~/types';
 import axios from 'axios';
 import Toast from 'react-native-root-toast';
+import { ActivityIndicator } from '~/components/nativewindui/ActivityIndicator';
 import * as SecureStore from 'expo-secure-store';
 import { useSaleStore } from '~/stores/useSaleStore';
 import { MotiView } from 'moti';
@@ -40,6 +41,7 @@ export default function NewSale() {
 
     // Step 1 states
     const [saleItems, setSaleItems] = useState<Product[]>([]);
+    const [saving, setSaving] = useState(false);
     const [products, setProducts] = useState<Product[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -55,6 +57,7 @@ export default function NewSale() {
     const totalZig = saleItems.reduce((acc, item) => acc + (item.zigPrice || 0), 0);
 
     const handleSaveSale = async () => {
+        if (saving) return;
         if (saleItems.length === 0) {
             Toast.show("No items in the order", {
                 backgroundColor: "red",
@@ -64,6 +67,7 @@ export default function NewSale() {
         }
 
         try {
+            setSaving(true);
             const session = JSON.parse(SecureStore.getItem("session") || "{}");
             const businessId = session.id || "";
 
@@ -88,13 +92,17 @@ export default function NewSale() {
             });
 
             resetSale();
+            setCurrentStep(1);
             // Optionally navigate away or reset steps
+            router.push("/(tabs)/home");
         } catch (e) {
             console.error("Error recording sale:", e);
             Toast.show("Failed to record sale. Please try again.", {
                 backgroundColor: "red",
                 textColor: "white",
             });
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -161,9 +169,17 @@ export default function NewSale() {
                     {currentStep === 3 ? (
                         <Pressable
                             onPress={handleSaveSale}
-                            className="px-6 py-3 rounded-lg bg-green-600"
+                            className={`flex flex-row gap-2 px-6 py-3 rounded-lg ${saving ? 'bg-green-800' : 'bg-green-600'}`}
+                            disabled={saving}
                         >
-                            <Text className="text-white font-semibold">Save Sale</Text>
+                            {saving ? (
+                                <>
+                                    <ActivityIndicator size="small" color="#fff" />
+                                    <Text className="text-white font-semibold">Saving Sale...</Text>
+                                </>
+                            ) : (
+                                <Text className="text-white font-semibold">Save Sale</Text>
+                            )}
                         </Pressable>
                     ) : (
                         <Pressable

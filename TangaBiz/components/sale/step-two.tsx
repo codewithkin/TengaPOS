@@ -11,6 +11,7 @@ import {
     View,
     KeyboardAvoidingView,
     Platform,
+    FlatList,
     ScrollView,
 } from "react-native";
 import { Plus, Search } from "lucide-react-native";
@@ -134,7 +135,7 @@ const StepTwo = () => {
     console.log("Customers :", customers);
 
     return (
-        <ScrollView>
+        <ScrollView className="flex-1">
             <View className="flex-1 items-center px-4">
                 {/* Search Input */}
                 <View className="flex flex-col w-full gap-2 mt-4">
@@ -173,15 +174,19 @@ const StepTwo = () => {
                     )}
 
                     {!loading && customers && customers.length > 0 && (
-                        <ScrollView className="max-h-48">
-                            {customers.map((customer, index) => {
-                                const isSelected = selectedCustomer?.id === customer.id;
+                        <FlatList
+                            data={customers}
+                            keyExtractor={(item) => item.id}
+                            style={{ maxHeight: 200, height: 200 }}
+                            showsVerticalScrollIndicator={false}
+                            nestedScrollEnabled={true}
+                            renderItem={({ item }) => {
+                                const isSelected = selectedCustomer?.id === item.id;
                                 return (
                                     <Pressable
-                                        key={index}
                                         onPress={() => {
-                                            setCustomerId(customer.id);
-                                            setSelectedCustomer(customer);
+                                            setCustomerId(item.id);
+                                            setSelectedCustomer(item);
                                         }}
                                         className={`py-3 px-4 mb-2 rounded-xl border ${isSelected
                                             ? "bg-green-100 dark:bg-green-800 border-green-500"
@@ -192,12 +197,12 @@ const StepTwo = () => {
                                             className={`text-base ${isSelected ? "text-green-600 dark:text-lime-200" : "text-black dark:text-white"
                                                 }`}
                                         >
-                                            {customer.name} - {customer.phone}
+                                            {item.name} - {item.phone}
                                         </Text>
                                     </Pressable>
                                 );
-                            })}
-                        </ScrollView>
+                            }}
+                        />
                     )}
                 </View>
 
