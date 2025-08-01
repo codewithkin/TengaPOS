@@ -13,6 +13,7 @@ import initializePayment from "../controllers/payments/initializePayment";
 import getAllData from "../controllers";
 import editProduct from "../controllers/products/editProduct";
 import searchForProduct from "../controllers/products/searchForProduct";
+import { searchCustomer } from "../controllers/customers/searchCustomer";
 export const routes = new Hono();
 
 // Get all data
@@ -41,6 +42,7 @@ routes.delete("/products", createProduct);
 
 /* Customer routes */
 routes.get("/customers", getCustomers);
+routes.get("/customers/search", searchCustomer);
 routes.delete("/customers", deleteCustomer);
 routes.post("/customers", createCustomer);
 
