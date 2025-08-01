@@ -2,10 +2,11 @@ import { Context } from "hono"
 import { prisma } from "../../helpers/prisma";
 
 async function searchForProduct(c: Context) {
-    const searchTerm = c.req.param("searchTerm");
-    const businessId = c.req.param("id");
+    const searchTerm = c.req.query("searchTerm");
+    const businessId = c.req.query("id");
 
     if (!businessId) {
+        console.log('Business id not found');
         return c.json({ error: 'Missing business id (id)' }, 400);
     }
 
@@ -25,7 +26,7 @@ async function searchForProduct(c: Context) {
 
         return c.json(products);
     } catch (error) {
-        console.error('[PRODUCT_SEARCH_ERROR]', error);
+        console.log('[PRODUCT_SEARCH_ERROR]', error);
         return c.json({ error: 'Failed to search products' }, 500);
     }
 }
