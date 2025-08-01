@@ -25,7 +25,7 @@ export default async function VerifyEmail(c: Context) {
                 }
             });
 
-            return c.redirect("tengapos://(auth)/verify-email/success");
+            return c.redirect("tangabiz://(auth)/verify-email/success");
         }
 
         // Find the verification token
@@ -45,7 +45,7 @@ export default async function VerifyEmail(c: Context) {
             }
         });
 
-        return c.redirect("tengapos://(auth)/verify-email/success");
+        return c.redirect("tangabiz://(auth)/verify-email/success");
     } catch (e) {
         console.log("An error occured while verfying the user's email: ", e);
 
