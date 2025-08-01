@@ -8,6 +8,7 @@ import { Search, SearchX } from "lucide-react-native";
 import { SkeletonCard } from "~/app/actions/new-sale";
 import ProductPreview from "../card/ProductPreview";
 import { addToSaleData } from "./saleData";
+import { useSaleStore } from "~/stores/useSaleStore";
 
 const { width, height } = Dimensions.get('window');
 const cardWidth = (width - 48) / 2;
@@ -41,6 +42,9 @@ export const StepOne = ({
     setRefreshing: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     const id = JSON.parse(SecureStore.getItem("session") || "{}").id;
+
+    const addProductId = useSaleStore(state => state.addProductId);
+    const removeProductId = useSaleStore(state => state.removeProductId);
 
     const getProducts = async () => {
         setLoading(true);
@@ -106,28 +110,12 @@ export const StepOne = ({
         const exists = saleItems.find(item => item.id === product.id);
         if (exists) {
             // Add to data
-            if (products) {
-                addToSaleData({
-                    products: [...products, product]
-                })
-            }
-
-            addToSaleData({
-                products: [product]
-            })
+            addProductId(product.id)
 
             setSaleItems(prev => prev.filter(item => item.id !== product.id));
         } else {
             // Remove from data
-            if (products) {
-                addToSaleData({
-                    products: [...products, product]
-                })
-            }
-
-            addToSaleData({
-                products: [product]
-            })
+            removeProductId(product.id);
 
             setSaleItems(prev => [...prev, product]);
         }

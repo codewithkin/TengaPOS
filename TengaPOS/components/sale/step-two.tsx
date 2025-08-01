@@ -16,6 +16,7 @@ import {
 import { Plus, Search } from "lucide-react-native";
 import { ActivityIndicator } from "../nativewindui/ActivityIndicator";
 import { addToSaleData, setSaleData } from "./saleData";
+import { useSaleStore } from "~/stores/useSaleStore";
 
 const StepTwo = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -128,6 +129,9 @@ const StepTwo = () => {
         }
     };
 
+    const setCustomerId = useSaleStore(state => state.setCustomerId);
+    const setPaymentMethod = useSaleStore(state => state.setPaymentMethod);
+
     console.log("Customers :", customers);
 
     return (
@@ -177,7 +181,7 @@ const StepTwo = () => {
                                     <Pressable
                                         key={index}
                                         onPress={() => {
-                                            addToSaleData({ customer });
+                                            setCustomerId(customer.id);
                                             setSelectedCustomer(customer);
                                         }}
                                         className={`py-3 px-4 mb-2 rounded-xl border ${isSelected
@@ -206,9 +210,7 @@ const StepTwo = () => {
                             key={id}
                             onPress={() => {
                                 // Update the sale data with the payment method
-                                addToSaleData({
-                                    paymentMethod: value
-                                });
+                                setPaymentMethod(value);
                                 setSelectedPayment(value);
                             }}
                             className={`flex flex-row justify-between items-center w-full p-4 rounded-xl border ${selectedPayment === value

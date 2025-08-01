@@ -45,7 +45,7 @@ const StepThree = () => (
 
 export default function NewSale() {
     // Shared states
-    const [currentStep, setCurrentStep] = useState(2);
+    const [currentStep, setCurrentStep] = useState(1);
 
     // Step 1 states
     const [saleItems, setSaleItems] = useState<Product[]>([]);
