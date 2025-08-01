@@ -149,7 +149,7 @@ const StepTwo = () => {
 
                 {/* Add Customer */}
                 <View className="flex flex-row items-center justify-between w-full gap-2 py-4 mt-4">
-                    <Text className="font-medium text-base text-gray-700">Add new customer</Text>
+                    <Text className="font-medium text-base text-gray-700 dark:text-gray-500">Add new customer</Text>
                     <Pressable onPress={() => setModalVisible(true)}>
                         <Plus color="#374151" />
                     </Pressable>
@@ -157,7 +157,7 @@ const StepTwo = () => {
 
                 {/* Customers List */}
                 <View className="flex flex-col w-full py-4 mt-4">
-                    <Text className="font-semibold text-lg mb-2">Customers</Text>
+                    <Text className="font-semibold text-lg mb-2 dark:text-white">Customers</Text>
 
                     {loading && <ActivityIndicator size="large" color="#3b82f6" />}
 
@@ -200,7 +200,7 @@ const StepTwo = () => {
 
                 {/* Payment Methods */}
                 <View className="flex flex-col w-full gap-4 py-4 mt-4">
-                    <Text className="font-semibold text-lg mb-2">Payment Method</Text>
+                    <Text className="font-semibold text-lg mb-2 ark:text-white">Payment Method</Text>
                     {paymentMethods.map(({ id, label, value }) => (
                         <Pressable
                             key={id}

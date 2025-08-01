@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, SearchX } from "lucide-react-native";
 import { SkeletonCard } from "~/app/actions/new-sale";
 import ProductPreview from "../card/ProductPreview";
+import { addToSaleData } from "./saleData";
 
 const { width, height } = Dimensions.get('window');
 const cardWidth = (width - 48) / 2;
@@ -104,8 +105,30 @@ export const StepOne = ({
     const toggleSaleItem = (product: Product) => {
         const exists = saleItems.find(item => item.id === product.id);
         if (exists) {
+            // Add to data
+            if (products) {
+                addToSaleData({
+                    products: [...products, product]
+                })
+            }
+
+            addToSaleData({
+                products: [product]
+            })
+
             setSaleItems(prev => prev.filter(item => item.id !== product.id));
         } else {
+            // Remove from data
+            if (products) {
+                addToSaleData({
+                    products: [...products, product]
+                })
+            }
+
+            addToSaleData({
+                products: [product]
+            })
+
             setSaleItems(prev => [...prev, product]);
         }
     };
