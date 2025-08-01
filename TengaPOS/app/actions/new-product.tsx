@@ -82,10 +82,14 @@ const NewProduct = () => {
                 throw new Error(`Failed with status ${response.status}`)
             }
 
-            Toast.show('Product added successfully!', { backgroundColor: 'green' })
+            Toast.show('Product added successfully!', { backgroundColor: 'green' });
+
+            const data = await response.json();
+
+            const productId = data.productId;
 
             setTimeout(() => {
-                router.push(`/products/${product.id}`);
+                router.push(`/products/${productId}`);
             }, 1000);
 
             setProductName('')

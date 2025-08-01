@@ -33,7 +33,7 @@ export default async function createProduct(c: Context) {
         }
 
         // Create the product with uploaded image URL
-        await prisma.product.create({
+        const newProduct = await prisma.product.create({
             data: {
                 businessId,
                 name: productName,
@@ -47,6 +47,7 @@ export default async function createProduct(c: Context) {
 
         return c.json({
             message: `Created product ${productName} successfully!`,
+            productId: newProduct.id
         });
     } catch (e) {
         console.error("Error creating product:", e);
