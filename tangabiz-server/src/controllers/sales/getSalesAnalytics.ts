@@ -14,13 +14,11 @@ export default async (c: Context) => {
     const now = new Date();
 
     if (range === "daily") {
-      // Last 24 hours split into 4 periods (6 hours each)
-      // Group sales by 6 hour slots in the last 24 hours
       const startDate = new Date(now);
       startDate.setHours(now.getHours() - 24);
 
       salesData = await prisma.$queryRaw<
-        { period: string; total: number }[]
+        { period: string; count: bigint }[]
       >`
         SELECT 
           CONCAT(
@@ -28,7 +26,7 @@ export default async (c: Context) => {
             '-',
             FLOOR(EXTRACT(HOUR FROM "createdAt") / 6) * 6 + 6
           ) AS period,
-          SUM("total") as total
+          COUNT(*) as count
         FROM "Sale"
         WHERE "businessId" = ${businessId}
           AND "createdAt" >= ${startDate}
@@ -37,10 +35,9 @@ export default async (c: Context) => {
         ORDER BY period
       `;
 
-      // Ensure all 4 periods exist (0-6, 6-12, 12-18, 18-24)
       const allPeriods = ["0-6", "6-12", "12-18", "18-24"];
       const resultsMap = new Map(
-        salesData.map(({ period, total }) => [period, total])
+        salesData.map(({ period, count }) => [period, Number(count)])
       );
 
       salesData = allPeriods.map((p) => ({
@@ -48,16 +45,15 @@ export default async (c: Context) => {
         total: resultsMap.get(p) ?? 0,
       }));
     } else if (range === "weekly") {
-      // Last 7 days, group by day (YYYY-MM-DD)
       const startDate = new Date(now);
-      startDate.setDate(now.getDate() - 6); // 7 days total including today
+      startDate.setDate(now.getDate() - 6);
 
       salesData = await prisma.$queryRaw<
-        { day: string; total: number }[]
+        { day: string; count: bigint }[]
       >`
         SELECT 
           TO_CHAR("createdAt", 'YYYY-MM-DD') AS day,
-          SUM("total") as total
+          COUNT(*) as count
         FROM "Sale"
         WHERE "businessId" = ${businessId}
           AND "createdAt" >= ${startDate}
@@ -66,8 +62,9 @@ export default async (c: Context) => {
         ORDER BY day
       `;
 
-      // Fill missing days with zero total
-      const resultsMap = new Map(salesData.map(({ day, total }) => [day, total]));
+      const resultsMap = new Map(
+        salesData.map(({ day, count }) => [day, Number(count)])
+      );
       salesData = [];
 
       for (let i = 0; i < 7; i++) {
@@ -80,38 +77,44 @@ export default async (c: Context) => {
         });
       }
     } else if (range === "monthly") {
-      // Last 6 months grouped by month name
       const startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
       salesData = await prisma.$queryRaw<
-        { month: string; total: number }[]
+        { year: number; month: number; count: bigint }[]
       >`
         SELECT 
-          TO_CHAR("createdAt", 'Mon YYYY') AS month,
-          SUM("total") as total
+          EXTRACT(YEAR FROM "createdAt") AS year,
+          EXTRACT(MONTH FROM "createdAt") AS month,
+          COUNT(*) as count
         FROM "Sale"
         WHERE "businessId" = ${businessId}
           AND "createdAt" >= ${startDate}
           AND "createdAt" <= ${now}
-        GROUP BY month
-        ORDER BY TO_DATE(month, 'Mon YYYY')
+        GROUP BY year, month
+        ORDER BY year, month
       `;
 
-      // Fill missing months with zero total
       const resultsMap = new Map(
-        salesData.map(({ month, total }) => [month, total])
+        salesData.map(({ year, month, count }) => {
+          const label = new Date(year, month - 1).toLocaleString("en-US", {
+            month: "short",
+            year: "numeric",
+          });
+          return [label, Number(count)];
+        })
       );
-      salesData = [];
 
+      salesData = [];
       for (let i = 0; i < 6; i++) {
         const date = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
-        const monthStr = date.toLocaleString("en-US", {
+        const label = date.toLocaleString("en-US", {
           month: "short",
           year: "numeric",
         });
+
         salesData.push({
-          label: monthStr,
-          total: resultsMap.get(monthStr) ?? 0,
+          label,
+          total: resultsMap.get(label) ?? 0,
         });
       }
     } else {

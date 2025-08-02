@@ -79,6 +79,8 @@ export default function SalesTrend() {
 
   const filters: FilterType[] = ["daily", "weekly", "monthly"];
 
+  console.log(sales);
+
   return (
     <View className="p-4 mt-8 rounded-xl w-full bg-white dark:bg-gray-800 shadow">
       <Text className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
