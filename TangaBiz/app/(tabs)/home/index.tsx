@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import { formatCurrency } from "react-native-format-currency";
 import RecentSales from '~/components/home/RecentSales';
 import { ScrollView } from 'react-native-gesture-handler';
+import SalesTrend from '~/components/home/SalesTrend';
 
 const Home = () => {
     const [currency, setCurrency] = useState<"USD" | "ZiG">("USD");
@@ -176,6 +177,8 @@ const Home = () => {
                 </View>
 
                 <RecentSales />
+
+                <SalesTrend />
             </ScrollView>
 
             {/* Floating Buttons (always on screen) */}

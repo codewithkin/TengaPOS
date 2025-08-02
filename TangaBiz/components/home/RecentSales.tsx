@@ -50,7 +50,7 @@ export default function RecentSales() {
 
   if (error) {
     return (
-      <View className="items-center justify-center p-6 rounded-xl border border-red-300 bg-red-100 dark:bg-red-900">
+      <View className="items-center mt-8 justify-center p-6 rounded-xl border border-red-300 bg-red-100 dark:bg-red-900">
         <AlertTriangle color="#dc2626" strokeWidth={1.5} size={72} />
         <Text className="mt-3 font-semibold text-red-700 text-lg dark:text-red-300">
           Failed to fetch sales

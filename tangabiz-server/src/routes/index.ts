@@ -17,6 +17,7 @@ import { searchCustomer } from "../controllers/customers/searchCustomer";
 import getSale from "../controllers/sales/getSale";
 import downloadSale from "../controllers/sales/downloadSale";
 import getRecentSales from "../controllers/sales/getRecentSales";
+import getSalesAnalytics from "../controllers/sales/getSalesAnalytics";
 export const routes = new Hono();
 
 // Get all data
@@ -54,6 +55,7 @@ routes.post("/sale", createSale);
 routes.get("/sale", getSale);
 routes.get("/sale/download", downloadSale);
 routes.get("/sales/recent", getRecentSales);
+routes.get("/sales/analytics", getSalesAnalytics);
 
 // Payment routes
 routes.post("/payments/initialize", initializePayment);
