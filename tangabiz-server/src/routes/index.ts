@@ -18,6 +18,7 @@ import getSale from "../controllers/sales/getSale";
 import downloadSale from "../controllers/sales/downloadSale";
 import getRecentSales from "../controllers/sales/getRecentSales";
 import getSalesAnalytics from "../controllers/sales/getSalesAnalytics";
+import { getTopSellingProducts } from "../controllers/products/topSellingProducts";
 export const routes = new Hono();
 
 // Get all data
@@ -31,6 +32,9 @@ routes.get("/auth/verify-email", VerifyEmail);
 /* Product routes */
 // Get all products
 routes.get("/products", getAllProducts);
+
+// Get top selling products
+routes.get("/products/top-selling", getTopSellingProducts);
 
 // Create a new product
 routes.post("/products", createProduct);
