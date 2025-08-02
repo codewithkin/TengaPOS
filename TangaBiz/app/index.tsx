@@ -1,4 +1,3 @@
-// ...imports remain the same
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
@@ -27,13 +26,10 @@ const StepWrapper = ({
   description: string;
 }) => (
   <View className="w-full flex-1 px-4 py-8 gap-40 items-center">
-    {/* Top Text */}
     <View className="w-full items-center">
       <Text className="text-2xl font-bold text-center mb-1 dark:text-white">{title}</Text>
       <Text className="text-base text-center text-gray-600 dark:text-gray-400">{description}</Text>
     </View>
-
-    {/* Center Content (icon or custom) */}
     {centerContent}
   </View>
 );
@@ -51,7 +47,7 @@ const StepOne = () => (
   />
 );
 
-// ✅ Step 2 Content (animated cards)
+// ✅ Step 2 Content
 const StepTwoCenterContent = () => {
   const items = [
     {
@@ -110,7 +106,7 @@ const StepTwo = () => (
   />
 );
 
-// ✅ Step 3 Content (animated icon)
+// ✅ Step 3
 const StepThreeCenterContent = () => (
   <MotiView
     from={{ opacity: 0, scale: 0.7 }}
@@ -122,7 +118,6 @@ const StepThreeCenterContent = () => (
   </MotiView>
 );
 
-// ✅ Step 3
 const StepThree = () => (
   <StepWrapper
     centerContent={<StepThreeCenterContent />}
@@ -131,18 +126,31 @@ const StepThree = () => (
   />
 );
 
+// ✅ Main Page
 const MainPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
   const steps = [<StepOne key="1" />, <StepTwo key="2" />, <StepThree key="3" />];
 
   useEffect(() => {
     const checkSession = async () => {
       const session = await Store.getItemAsync('session');
       const onboardingCompleted = await Store.getItemAsync('onboardingCompleted');
-      // if (session) return router.replace('/(tabs)/home');
-      if (session) return router.replace('/modals/receipts/271eee51-7934-4a4d-ace3-604b32b34d38');
-      if (onboardingCompleted) return router.replace('/(auth)/signin');
+
+      if (session) {
+        router.replace('/(tabs)/home');
+        return;
+      }
+
+      if (onboardingCompleted) {
+        router.replace('/(auth)/signin');
+        return;
+      }
+
+      setIsLoading(false); // Only show onboarding if session and onboarding are NOT found
     };
+
     checkSession();
   }, []);
 
@@ -163,6 +171,9 @@ const MainPage = () => {
     await Store.setItemAsync('onboardingCompleted', 'true');
     router.replace('/(auth)/signin');
   };
+
+  // Don't show anything while deciding (splash screen remains visible)
+  if (isLoading) return null;
 
   return (
     <View className="light:bg-white px-4 h-full flex justify-between items-center py-8">
@@ -187,15 +198,13 @@ const MainPage = () => {
           {steps.map((_, i) => (
             <View
               key={i}
-              className={`w-2.5 h-2.5 rounded-full ${currentStep === i ? 'bg-green-600' : 'bg-gray-400'
-                }`}
+              className={`w-2.5 h-2.5 rounded-full ${currentStep === i ? 'bg-green-600' : 'bg-gray-400'}`}
             />
           ))}
         </View>
 
         {/* Navigation Buttons */}
         <View className="w-full flex-row justify-between gap-3 px-4">
-          {/* Back / Skip */}
           <TouchableOpacity
             onPress={currentStep > 0 ? prevStep : skip}
             className="w-1/3 border border-gray-300 dark:border-gray-600 rounded-xl px-6 py-3 items-center"
@@ -205,7 +214,6 @@ const MainPage = () => {
             </Text>
           </TouchableOpacity>
 
-          {/* Next / Get Started */}
           <TouchableOpacity
             onPress={nextStep}
             className="w-2/3 bg-green-600 px-6 py-3 rounded-xl items-center"
