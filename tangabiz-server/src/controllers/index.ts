@@ -29,7 +29,7 @@ export default async function getAllData(c: Context) {
         });
 
         // Customers 
-        const customers = await prisma.sale.findMany({
+        const customers = await prisma.customer.findMany({
             where: {
                 businessId
             }
