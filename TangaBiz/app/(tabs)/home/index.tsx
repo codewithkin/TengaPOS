@@ -17,7 +17,7 @@ const Home = () => {
         ZiG: "4,047.08",
         USD: "400.30"
     }
-
+    
     // Get the business' id;
     const business = JSON.parse(Store.getItem("session") || "{}");
 
@@ -49,6 +49,8 @@ const Home = () => {
         getData();
     }, []);
 
+    console.log(data);
+
     return (
         <View className="px-2 py-12 flex flex-col gap-8 h-full bg-white dark:bg-black">
             {/* Total Received */}
@@ -65,7 +67,7 @@ const Home = () => {
                         <View className="flex flex-col gap-1">
                             <Text className="text-gray-400 text-center">Total Received</Text>
                             <Text className="dark:text-white text-5xl text-center">
-                                {data?.sales?.length === 0 ? "$0.00" : amounts[currency]}
+                                {data?.sales === 0 ? "$0.00" : amounts[currency]}
                             </Text>
                         </View>
                     )}
@@ -151,7 +153,7 @@ const Home = () => {
                                         <Text className="text-white font-semibold text-md">Sales</Text>
                                     </View>
                                     <Text className="text-white p-2">
-                                        <Text className="font-semibold text-3xl">{data?.sales?.length || 0}</Text>
+                                        <Text className="font-semibold text-3xl">{data?.sales || 0}</Text>
                                         <Text className="text-gray-300"> total sales</Text>
                                     </Text>
                                 </View>
@@ -164,7 +166,7 @@ const Home = () => {
                                         <Text className="text-white font-semibold text-md">Customers</Text>
                                     </View>
                                     <Text className="text-white p-2">
-                                        <Text className="font-semibold text-3xl">{data?.customers?.length || 0}</Text>
+                                        <Text className="font-semibold text-3xl">{data?.customers || 0}</Text>
                                         <Text className="text-gray-300"> customers</Text>
                                     </Text>
                                 </View>
@@ -174,7 +176,7 @@ const Home = () => {
                                 <View className="w-full flex flex-row gap-2 items-center p-2">
                                     <Text className="text-white font-semibold text-md">Products in inventory</Text>
                                 </View>
-                                <Text className="text-white p-2 font-semibold text-3xl">{data?.products?.length || 0}</Text>
+                                <Text className="text-white p-2 font-semibold text-3xl">{data?.products || 0}</Text>
                             </View>
                         </>
                     )

@@ -20,23 +20,22 @@ export default async function getAllData(c: Context) {
             }, 400);
         }
 
-
-        // Sales
-        const sales = await prisma.sale.findMany({
+        // Sale number
+        const sales = await prisma.sale.count({
             where: {
                 businessId
             }
         });
 
-        // Customers 
-        const customers = await prisma.customer.findMany({
+        // Customer count
+        const customers = await prisma.customer.count({
             where: {
                 businessId
             }
         });
-
+        
         // Products
-        const products = await prisma.product.findMany({
+        const products = await prisma.product.count({
             where: {
                 businessId
             }
