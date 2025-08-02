@@ -9,7 +9,11 @@ export default async function getSale(c: Context) {
         include: {
             customer: true,
             business: true,
-            items: true
+            items: {
+                include: {
+                    product: true
+                }
+            }
         }
     });
 

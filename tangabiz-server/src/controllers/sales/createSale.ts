@@ -40,17 +40,21 @@ export default async function createSale(c: Context) {
       },
     });
 
+    
+    // Create sale items
+    const saleItemsData = products.map((p: { product: Product; quantity: number }) => ({
+        productId: p.product.id,
+        quantity: p.quantity,
+        saleId: sale.id,
+      }));
+
+      // Create sale items
+      await prisma.saleItem.createMany({ data: saleItemsData });
+
     // Get sale items
     const saleItems = await prisma.saleItem.findMany({
       where: { saleId: sale.id }
     });
-
-    // Create sale items
-    const saleItemsData = products.map((p: { product: Product; quantity: number }) => ({
-      productId: p.product.id,
-      quantity: p.quantity,
-      saleId: sale.id,
-    }));
 
     // Update the sale with the sale items
     await prisma.sale.update({

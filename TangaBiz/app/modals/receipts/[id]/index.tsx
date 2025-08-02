@@ -6,7 +6,7 @@ import axios from "axios";
 import { useLocalSearchParams, Stack, router } from "expo-router";
 import Toast from "react-native-root-toast";
 import { ActivityIndicator } from "~/components/nativewindui/ActivityIndicator";
-import { Sale, Product, Customer, Business } from "~/types";
+import { Sale, Product, Customer, Business, SaleItem } from "~/types";
 
 import { AlertTriangle, RotateCcw, Home, DownloadCloud, Share2Icon, BadgeCheck } from "lucide-react-native";
 
@@ -21,7 +21,7 @@ const Skeleton = ({ width, height, className }: { width: number | string; height
 );
 
 interface FullSale extends Sale {
-  items: Product[];
+  items: SaleItem[];
   customer?: Customer;
   business?: Business;
 }
@@ -131,6 +131,8 @@ export default function Receipt() {
   // Helpers
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString();
 
+  console.log(sale);
+
   return (
     <ScrollView className="flex-1 bg-white dark:bg-black px-4 pt-6 pb-12">
       <Stack.Screen options={{ title: "Receipt Details" }} />
@@ -180,10 +182,10 @@ export default function Receipt() {
             className="flex flex-row justify-between items-center mb-3 bg-gray-100 dark:bg-gray-800 px-4 py-3 rounded-xl"
           >
             <Text className="text-slate-800 dark:text-slate-200 w-2/3" numberOfLines={1}>
-              {item.name}
+              {item.product.name}
             </Text>
             <Text className="text-slate-800 dark:text-slate-200 font-medium">
-              ${item.price.toFixed(2)}
+              ${item.product.price.toFixed(2)}
             </Text>
           </View>
         ))}

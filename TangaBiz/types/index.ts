@@ -78,3 +78,11 @@ export interface Sale {
 
     items?: Product[];
 }
+
+export interface SaleItem {
+    id: string;
+    productId: string;
+    product: Product;
+    quantity: number;
+    saleId: string;
+}
