@@ -41,11 +41,23 @@ export default async function getAllData(c: Context) {
             }
         });
 
+        // Get the totals (usd and zig)
+        const totals = await prisma.sale.aggregate({
+            where: {
+                businessId
+            },
+            _sum: {
+                total: true,
+                zigTotal: true
+            }
+        });
+
         // Return the business's data
         return c.json({
             sales,
             customers,
-            products
+            products,
+            totals
         });
     } catch (e) {
         console.log("An error occured while getting data: ", e);

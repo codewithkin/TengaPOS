@@ -51,6 +51,7 @@
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
     "react-native-animated-icons": "^1.0.5",
+    "react-native-format-currency": "^0.0.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-gifted-charts": "^1.4.63",
     "react-native-pager-view": "6.7.1",

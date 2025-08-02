@@ -6,6 +6,7 @@ import Toast from 'react-native-root-toast';
 import * as Store from "expo-secure-store";
 import { MotiView, AnimatePresence } from 'moti';
 import { router } from 'expo-router';
+import { formatCurrency } from "react-native-format-currency";
 
 const Home = () => {
     const [currency, setCurrency] = useState<"USD" | "ZiG">("USD");
@@ -14,8 +15,8 @@ const Home = () => {
     const [showCurrencyChooser, setCurrencyChooserShow] = useState<boolean>(false);
 
     const amounts = {
-        ZiG: "4,047.08",
-        USD: "400.30"
+        ZiG: data?.totals?._sum?.zigTotal || 0,
+        USD: data?.totals?._sum?.total || 0
     }
     
     // Get the business' id;
@@ -51,6 +52,11 @@ const Home = () => {
 
     console.log(data);
 
+    const [valueFormattedWithSymbol] = formatCurrency({
+        amount: Number(amounts[currency]),
+        code: "USD"
+    })
+
     return (
         <View className="px-2 py-12 flex flex-col gap-8 h-full bg-white dark:bg-black">
             {/* Total Received */}
@@ -67,7 +73,7 @@ const Home = () => {
                         <View className="flex flex-col gap-1">
                             <Text className="text-gray-400 text-center">Total Received</Text>
                             <Text className="dark:text-white text-5xl text-center">
-                                {data?.sales === 0 ? "$0.00" : amounts[currency]}
+                                {valueFormattedWithSymbol}
                             </Text>
                         </View>
                     )}
