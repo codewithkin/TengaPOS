@@ -7,6 +7,8 @@ import * as Store from "expo-secure-store";
 import { MotiView, AnimatePresence } from 'moti';
 import { router } from 'expo-router';
 import { formatCurrency } from "react-native-format-currency";
+import RecentSales from '~/components/home/RecentSales';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Home = () => {
     const [currency, setCurrency] = useState<"USD" | "ZiG">("USD");
@@ -58,7 +60,8 @@ const Home = () => {
     })
 
     return (
-        <View className="px-2 py-12 flex flex-col gap-8 h-full bg-white dark:bg-black">
+        <ScrollView className="flex-1">
+            <View className="px-2 py-12 flex flex-col gap-8 h-full bg-white dark:bg-black">
             {/* Total Received */}
             <View className="flex flex-col justify-center items-center mb-4 gap-2">
                 <AnimatePresence>
@@ -192,7 +195,7 @@ const Home = () => {
             {/* Floating Add Button */}
             {
                 !isLoading && (
-                    <View className="flex flex-col gap-2 items-center right-4 absolute bottom-4 ">
+                    <View className="flex flex-col gap-2 items-center right-4 absolute z-20 bottom-4 ">
                         <Pressable onPress={() => {
                             router.push("/actions/new-product");
                         }} className="bg-indigo-600 rounded-full p-4 w-full flex flex-row gap-2 items-center self-start">
@@ -208,7 +211,12 @@ const Home = () => {
                     </View>
                 )
             }
+
+            <View className="flex flex-col gap-2">
+                <RecentSales /> 
+            </View>
         </View>
+        </ScrollView>
     );
 }
 
