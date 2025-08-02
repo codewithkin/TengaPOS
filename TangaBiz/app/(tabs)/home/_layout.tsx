@@ -7,7 +7,7 @@ const HomeLayout = () => {
             <Stack.Screen
                 name="index"
                 options={{
-                    headerTitle: "TengaPOS",
+                    headerTitle: "TangaBiz",
                     headerTitleAlign: "center",
                     headerTitleStyle: {
                         fontWeight: "700"
