@@ -64,7 +64,7 @@ export default function RecentSales() {
   }
 
   return (
-    <View className="flex flex-col gap-2">
+    <View className="flex mt-6 flex-col gap-2">
       <Text className="text-lg dark:text-white font-bold mb-2">Recent Sales</Text>
 
       {/* Table Headings */}

@@ -19,16 +19,14 @@ const Home = () => {
     const amounts = {
         ZiG: data?.totals?._sum?.zigTotal || 0,
         USD: data?.totals?._sum?.total || 0
-    }
-    
-    // Get the business' id;
+    };
+
     const business = JSON.parse(Store.getItem("session") || "{}");
 
     const getData = async () => {
         try {
             setIsLoading(true);
             const res = await axios.get(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz?businessId=${business.id}`);
-
             if (res.status === 200) {
                 setData(res.data);
             } else {
@@ -46,55 +44,52 @@ const Home = () => {
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         getData();
     }, []);
 
-    console.log(data);
-
     const [valueFormattedWithSymbol] = formatCurrency({
         amount: Number(amounts[currency]),
         code: "USD"
-    })
+    });
 
     return (
-        <ScrollView className="flex-1">
-            <View className="px-2 py-12 flex flex-col gap-8 h-full bg-white dark:bg-black">
-            {/* Total Received */}
-            <View className="flex flex-col justify-center items-center mb-4 gap-2">
-                <AnimatePresence>
-                    {isLoading ? (
-                        <MotiView
-                            from={{ opacity: 0.3 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ loop: true, type: 'timing', duration: 800 }}
-                            className="w-40 h-12 rounded-xl bg-gray-300 dark:bg-gray-700"
-                        />
-                    ) : (
-                        <View className="flex flex-col gap-1">
-                            <Text className="text-gray-400 text-center">Total Received</Text>
-                            <Text className="dark:text-white text-5xl text-center">
-                                {valueFormattedWithSymbol}
-                            </Text>
-                        </View>
+        <View className="flex-1 bg-white dark:bg-black">
+            <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="px-2 pt-12 flex flex-col gap-8">
+                {/* Total Received */}
+                <View className="flex flex-col justify-center items-center mb-4 gap-2">
+                    <AnimatePresence>
+                        {isLoading ? (
+                            <MotiView
+                                from={{ opacity: 0.3 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ loop: true, type: 'timing', duration: 800 }}
+                                className="w-40 h-12 rounded-xl bg-gray-300 dark:bg-gray-700"
+                            />
+                        ) : (
+                            <View className="flex flex-col gap-1">
+                                <Text className="text-gray-400 text-center">Total Received</Text>
+                                <Text className="dark:text-white text-5xl text-center">
+                                    {valueFormattedWithSymbol}
+                                </Text>
+                            </View>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Currency Switcher */}
+                    {!isLoading && (
+                        <Pressable
+                            onPress={() => setCurrencyChooserShow(!showCurrencyChooser)}
+                            className={`flex flex-row gap-1 items-center border ${currency === "USD" ? "bg-green-600" : "bg-indigo-500"} border-slate-600 dark:border-gray-400 px-12 py-2 rounded-3xl`}
+                        >
+                            <Text className="text-slate-600 dark:text-slate-800 font-semibold">{currency}</Text>
+                        </Pressable>
                     )}
-                </AnimatePresence>
 
-                {/* Currency Switcher */}
-                {!isLoading && (
-                    <Pressable
-                        onPress={() => setCurrencyChooserShow(!showCurrencyChooser)}
-                        className={`flex flex-row gap-1 items-center border ${currency === "USD" ? "bg-green-600" : "bg-indigo-500"} border-slate-600 dark:border-gray-400 px-12 py-2 rounded-3xl`}
-                    >
-                        <Text className="text-slate-600 dark:text-slate-800 font-semibold">{currency}</Text>
-                    </Pressable>
-                )}
-
-                {/* Currency Chooser */}
-                {
-                    showCurrencyChooser && !isLoading && (
+                    {/* Currency Chooser */}
+                    {showCurrencyChooser && !isLoading && (
                         <View className="top-28 w-full z-20 p-4 absolute bg-white rounded-3xl flex flex-col gap-2">
                             <Text className="text-lg font-semibold">Select your currency</Text>
                             <Pressable onPress={() => {
@@ -123,33 +118,22 @@ const Home = () => {
                                 </View>
                             </Pressable>
                         </View>
-                    )
-                }
-            </View>
+                    )}
+                </View>
 
-            {/* Cards Section */}
-            <View className="w-full flex flex-col gap-2">
-                {
-                    isLoading ? (
+                {/* Cards Section */}
+                <View className="w-full flex flex-col gap-2">
+                    {isLoading ? (
                         <>
-                            <MotiView
-                                from={{ opacity: 0.3 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ loop: true, type: 'timing', duration: 800 }}
-                                className="h-24 w-full bg-gray-300 dark:bg-gray-700 rounded-3xl"
-                            />
-                            <MotiView
-                                from={{ opacity: 0.3 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ loop: true, type: 'timing', duration: 800 }}
-                                className="h-24 w-full bg-gray-300 dark:bg-gray-700 rounded-3xl"
-                            />
-                            <MotiView
-                                from={{ opacity: 0.3 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ loop: true, type: 'timing', duration: 800 }}
-                                className="h-24 w-full bg-gray-300 dark:bg-gray-700 rounded-3xl"
-                            />
+                            {[...Array(3)].map((_, i) => (
+                                <MotiView
+                                    key={i}
+                                    from={{ opacity: 0.3 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ loop: true, type: 'timing', duration: 800 }}
+                                    className="h-24 w-full bg-gray-300 dark:bg-gray-700 rounded-3xl"
+                                />
+                            ))}
                         </>
                     ) : (
                         <>
@@ -188,36 +172,33 @@ const Home = () => {
                                 <Text className="text-white p-2 font-semibold text-3xl">{data?.products || 0}</Text>
                             </View>
                         </>
-                    )
-                }
-            </View>
+                    )}
+                </View>
 
-            {/* Floating Add Button */}
-            {
-                !isLoading && (
-                    <View className="flex flex-col gap-2 items-center right-4 absolute z-20 bottom-4 ">
-                        <Pressable onPress={() => {
-                            router.push("/actions/new-product");
-                        }} className="bg-indigo-600 rounded-full p-4 w-full flex flex-row gap-2 items-center self-start">
-                            <Package className="w-fit" color="white" size={18} strokeWidth={1.8} />
-                            <Text className="text-white font-medium text-sm">Add product</Text>
-                        </Pressable>
-                        <Pressable onPress={() => {
-                            router.push("/actions/new-sale");
-                        }} className="bg-green-600 rounded-full p-4 flex flex-row gap-2 items-center self-start w-full">
-                            <Plus className="w-fit" color="white" size={24} strokeWidth={2.2} />
-                            <Text className="text-white font-medium text-base">New sale</Text>
-                        </Pressable>
-                    </View>
-                )
-            }
+                <RecentSales />
+            </ScrollView>
 
-            <View className="flex flex-col gap-2">
-                <RecentSales /> 
-            </View>
+            {/* Floating Buttons (always on screen) */}
+            {!isLoading && (
+                <View className="absolute right-4 bottom-4 z-50 flex flex-col gap-2 items-end">
+                    <Pressable
+                        onPress={() => router.push("/actions/new-product")}
+                        className="bg-indigo-600 rounded-full p-4 flex flex-row gap-2 items-center"
+                    >
+                        <Package color="white" size={18} strokeWidth={1.8} />
+                        <Text className="text-white font-medium text-sm">Add product</Text>
+                    </Pressable>
+                    <Pressable
+                        onPress={() => router.push("/actions/new-sale")}
+                        className="bg-green-600 rounded-full p-4 flex flex-row gap-2 items-center"
+                    >
+                        <Plus color="white" size={18} strokeWidth={1.8} />
+                        <Text className="text-white font-medium text-sm">Add sale</Text>
+                    </Pressable>
+                </View>
+            )}
         </View>
-        </ScrollView>
     );
-}
+};
 
 export default Home;
