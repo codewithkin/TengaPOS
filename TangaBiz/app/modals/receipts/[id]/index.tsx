@@ -8,7 +8,7 @@ import Toast from "react-native-root-toast";
 import { ActivityIndicator } from "~/components/nativewindui/ActivityIndicator";
 import { Sale, Product, Customer, Business } from "~/types";
 
-import { AlertTriangle, RotateCcw, Home, DownloadCloud, Share2Icon } from "lucide-react-native";
+import { AlertTriangle, RotateCcw, Home, DownloadCloud, Share2Icon, BadgeCheck } from "lucide-react-native";
 
 const Skeleton = ({ width, height, className }: { width: number | string; height: number; className?: string }) => (
   <MotiView
@@ -131,69 +131,24 @@ export default function Receipt() {
   // Helpers
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString();
 
-  const handleDownload = async () => {
-    if (!id || downloading) return;
-    try {
-      setDownloading(true);
-      const { config, fs, android } = RNFetchBlob;
-      const dirs = fs.dirs;
-      const dir = Platform.OS === 'android' ? dirs.DownloadDir : dirs.DocumentDir;
-      const path = `${dir}/receipt-${id}.pdf`;
-
-      await config({
-        fileCache: true,
-        path,
-        addAndroidDownloads: {
-          useDownloadManager: true,
-          notification: true,
-          title: `Receipt ${id}.pdf`,
-          description: 'Downloading receipt',
-          mime: 'application/pdf',
-          path,
-        },
-      }).fetch('GET', `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz/sale/download?saleId=${id}`);
-
-      Toast.show('Receipt downloaded', { backgroundColor: 'green', textColor: 'white' });
-    } catch (e) {
-      console.error('Failed to download receipt', e);
-      Toast.show('Failed to download receipt', { backgroundColor: 'red', textColor: 'white' });
-    } finally {
-      setDownloading(false);
-    }
-  };
-
-  const handleShare = async () => {
-    if (!id || downloading) return;
-    try {
-      setDownloading(true);
-      const downloadUrl = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz/sale/download?saleId=${id}`;
-      const fileUri = `${FileSystem.documentDirectory}receipt-${id}.pdf`;
-      const { fs, config } = RNFetchBlob;
-      const dirs = fs.dirs;
-      const filePath = `${dirs.DocumentDir}/share-receipt-${id}.pdf`;
-      await config({ fileCache: true, path: filePath })
-        .fetch('GET', `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/tangabiz/sale/download?saleId=${id}`);
-      await Share.share({ url: Platform.OS === 'android' ? 'file://' + filePath : filePath, title: 'Share Receipt' });
-    } catch (e) {
-      console.error("Failed to share receipt", e);
-      Toast.show("Failed to share receipt", { backgroundColor: "red", textColor: "white" });
-    } finally {
-      setDownloading(false);
-    }
-  };
-
-
   return (
-    <ScrollView className="flex-1 bg-white dark:bg-black px-4 py-6">
-      <Stack.Screen options={{ title: "Receipt" }} />
+    <ScrollView className="flex-1 bg-white dark:bg-black px-4 pt-6 pb-12">
+      <Stack.Screen options={{ title: "Receipt Details" }} />
+
+      <View className="flex flex-col pb-4 mb-4 gap-2 justify-center border-b dark:border-b-slate-700 items-center">
+        <BadgeCheck size={64} color="lightgreen" />
+        <Text className="text-xl font-semibold text-slate-800 dark:text-white mb-1">
+          Payment Success
+        </Text>
+      </View>
 
       {/* Header */}
       <View className="mb-6 items-center">
-        <Text className="text-2xl font-bold text-slate-800 dark:text-white mb-1">
+        <Text className="text-2xl font-semibold text-slate-800 dark:text-white mb-1">
           {sale.business?.businessName || "Sale Receipt"}
         </Text>
         <Text className="text-base text-slate-600 dark:text-slate-300">
-          #{sale.id.slice(0, 8).toUpperCase()} • {formatDate(sale.createdAt)}
+          {formatDate(sale.createdAt)}
         </Text>
       </View>
 
@@ -258,29 +213,6 @@ export default function Receipt() {
             {sale.paymentType}
           </Text>
         </View>
-      </View>
-
-      <View className="flex flex-col gap-2">
-        {/* Download Button */}
-        <Pressable
-            onPress={handleDownload}
-            disabled={downloading}
-            className={`w-full py-4 rounded-xl flex flex-row items-center justify-center ${downloading ? 'bg-green-800' : 'bg-green-600'}`}
-        >
-            {downloading ? (
-            <ActivityIndicator size="small" color="#fff" />
-            ) : (
-            <DownloadCloud color="#fff" size={18} />
-            )}
-            <Text className="text-white font-semibold text-lg ml-2">{downloading ? 'Downloading...' : 'Download'}</Text>
-        </Pressable>
-        <Pressable
-            onPress={handleShare}
-            className={`w-full py-4 rounded-xl flex flex-row items-center justify-center mb-6 border border-indigo-600`}
-        >
-            <Share2Icon color="#fff" size={18} />
-            <Text className="text-indigo-600 font-semibold text-lg ml-2">Share</Text>
-        </Pressable>
       </View>
 
       {/* Footer */}
