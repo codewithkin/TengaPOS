@@ -2,6 +2,8 @@ import { Context } from "hono";
 import { prisma } from "../../helpers/prisma";
 import { Product } from "../../generated/prisma";
 
+// Items are not getting saved properly
+
 export default async function createSale(c: Context) {
   try {
     const { businessId, products, customerId, total, zigTotal, paymentMethod } = await c.req.json();
@@ -38,13 +40,25 @@ export default async function createSale(c: Context) {
       },
     });
 
+    // Get sale items
+    const saleItems = await prisma.saleItem.findMany({
+      where: { saleId: sale.id }
+    });
+
     // Create sale items
     const saleItemsData = products.map((p: { product: Product; quantity: number }) => ({
       productId: p.product.id,
       quantity: p.quantity,
       saleId: sale.id,
     }));
-    await prisma.saleItem.createMany({ data: saleItemsData });
+
+    // Update the sale with the sale items
+    await prisma.sale.update({
+      where: { id: sale.id },
+      data: {
+        items: { connect: saleItems.map((item: any) => ({ id: item.id })) }
+      }
+    });
 
     // Update product inventories individually
     await Promise.all(
