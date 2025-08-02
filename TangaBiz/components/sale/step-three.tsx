@@ -9,11 +9,10 @@ import { useSaleStore } from "~/stores/useSaleStore";
 import { ActivityIndicator } from "../nativewindui/ActivityIndicator";
 
 interface StepThreeProps {
-  saleItems: Product[];
   showRecordButton?: boolean;
 }
 
-export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButton = true }) => {
+export const StepThree: React.FC<StepThreeProps> = ({ showRecordButton = true }) => {
   // Local states
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [fetchingCustomer, setFetchingCustomer] = useState<boolean>(false);
@@ -51,16 +50,16 @@ export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButto
 
   // Compute totals for USD and ZiG
   const { totalUsd, totalZig } = useMemo(() => {
-    const usd = saleItems.reduce((acc, item) => acc + (item.price || 0), 0);
-    const zig = saleItems.reduce((acc, item) => acc + (item.zigPrice || 0), 0);
+    const usd = data.products.reduce((acc: number, item: any) => acc + (item.product.price || 0), 0);
+    const zig = data.products.reduce((acc: number, item: any) => acc + (item.product.zigPrice || 0), 0);
     setTotal(usd);
     setZigTotal(zig);
     return { totalUsd: usd, totalZig: zig };
-  }, [saleItems]);
+  }, [data.products]);
 
   const handleRecordSale = async () => {
     if (submitting) return;
-    if (saleItems.length === 0) {
+    if (data.products.length === 0) {
       Toast.show("No items in the order", {
         backgroundColor: "red",
         textColor: "white",
@@ -100,6 +99,8 @@ export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButto
     }
   };
 
+  console.log("data.products", data.products);
+
   return (
     <ScrollView className="flex-1 px-4 py-4 bg-white dark:bg-black">
       <Text className="text-2xl font-semibold text-slate-800 dark:text-white mb-6">
@@ -125,16 +126,16 @@ export const StepThree: React.FC<StepThreeProps> = ({ saleItems, showRecordButto
         <Text className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4">
           Items
         </Text>
-        {saleItems.map((item, idx) => (
+        {data.products.map((item: any, idx: number) => (
           <View
-            key={`${item.id}-${idx}`}
+            key={`${item.product.id}-${idx}`}
             className="flex flex-row justify-between items-center mb-3 bg-gray-100 dark:bg-gray-800 px-4 py-3 rounded-xl"
           >
             <Text className="text-slate-800 dark:text-slate-200 w-2/3" numberOfLines={1}>
-              {item.name}
+              {item.product.name}
             </Text>
             <Text className="text-slate-800 dark:text-slate-200 font-medium">
-              ${item.price.toFixed(2)}
+              ${item.product.price.toFixed(2)}
             </Text>
           </View>
         ))}

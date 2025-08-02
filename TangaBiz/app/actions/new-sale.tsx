@@ -40,7 +40,6 @@ export default function NewSale() {
     const [currentStep, setCurrentStep] = useState(1);
 
     // Step 1 states
-    const [saleItems, setSaleItems] = useState<Product[]>([]);
     const [saving, setSaving] = useState(false);
     const [products, setProducts] = useState<Product[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -53,7 +52,7 @@ export default function NewSale() {
 
     const handleSaveSale = async () => {
         if (saving) return;
-        if (saleItems.length === 0) {
+        if (data.products.length === 0) {
             Toast.show("No items in the order", {
                 backgroundColor: "red",
                 textColor: "white",
@@ -101,8 +100,6 @@ export default function NewSale() {
             case 1:
                 return (
                     <StepOne
-                        saleItems={saleItems}
-                        setSaleItems={setSaleItems}
                         products={products}
                         setProducts={setProducts}
                         loading={loading}
@@ -118,7 +115,7 @@ export default function NewSale() {
             case 2:
                 return <StepTwo />;
             case 3:
-                return <StepThree saleItems={saleItems} showRecordButton={false} />;
+                return <StepThree showRecordButton={false} />;
             default:
                 return null;
         }
@@ -173,7 +170,10 @@ export default function NewSale() {
                         </Pressable>
                     ) : (
                         <Pressable
-                            onPress={() => setCurrentStep(prev => Math.min(prev + 1, 3))}
+                            onPress={() => {
+                                setCurrentStep(prev => Math.min(prev + 1, 3));
+                                data.setProducts(products?.map(product => ({ product: product, quantity: 1 })) || []);
+                            }}
                             className="px-6 py-3 rounded-lg bg-indigo-600"
                         >
                             <Text className="text-white font-semibold">Next</Text>

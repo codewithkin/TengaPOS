@@ -7,7 +7,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, SearchX } from "lucide-react-native";
 import { SkeletonCard } from "~/app/actions/new-sale";
 import ProductPreview from "../card/ProductPreview";
-import { addToSaleData } from "./saleData";
 import { useSaleStore } from "~/stores/useSaleStore";
 
 const { width, height } = Dimensions.get('window');
@@ -15,8 +14,6 @@ const cardWidth = (width - 48) / 2;
 
 // Step 1: Product Selection
 export const StepOne = ({
-    saleItems,
-    setSaleItems,
     products,
     setProducts,
     loading,
@@ -28,8 +25,6 @@ export const StepOne = ({
     refreshing,
     setRefreshing,
 }: {
-    saleItems: Product[];
-    setSaleItems: React.Dispatch<React.SetStateAction<Product[]>>;
     products: Product[] | null;
     setProducts: React.Dispatch<React.SetStateAction<Product[] | null>>;
     loading: boolean;
@@ -42,9 +37,6 @@ export const StepOne = ({
     setRefreshing: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     const id = JSON.parse(SecureStore.getItem("session") || "{}").id;
-
-    const addProductId = useSaleStore(state => state.addProductId);
-    const removeProductId = useSaleStore(state => state.removeProductId);
 
     const getProducts = async () => {
         setLoading(true);
@@ -106,28 +98,6 @@ export const StepOne = ({
         }
     }, [id, setProducts, setRefreshing, setSearchTerm]);
 
-    const toggleSaleItem = (product: Product) => {
-        const exists = saleItems.find(item => item.id === product.id);
-        if (exists) {
-            // Remove from data
-            removeProductId(product.id);
-
-            console.log("Removed product from sale data", product.id);
-
-            setSaleItems(prev => prev.filter(item => item.id !== product.id));
-        } else {
-                        // Add to data
-                        addProductId(product.id)
-                        console.log("Added product to sale data", product.id);
-
-            setSaleItems(prev => [...prev, product]);
-        }
-    };
-
-    const isInSale = (productId: string) => {
-        return saleItems.some(item => item.id === productId);
-    };
-
     useEffect(() => {
         getProducts();
     }, []);
@@ -176,13 +146,11 @@ export const StepOne = ({
                         style={{ maxHeight: height * 0.5 }}
                     >
                         <View className="flex-row flex-wrap justify-between">
-                            {products?.map((product: Product, index: number) => (
+                            {products?.map((product: {product: Product, quantity: number}, index: number) => (
                                 <ProductPreview
                                     key={index}
-                                    product={product}
+                                    product={{ product: product, quantity: 1 }}
                                     cardWidth={cardWidth}
-                                    selected={isInSale(product.id)}
-                                    onToggleSelect={() => toggleSaleItem(product)}
                                 />
                             ))}
                         </View>

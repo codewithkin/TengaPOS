@@ -1,82 +1,72 @@
 import { Context } from "hono";
 import { prisma } from "../../helpers/prisma";
-
+import { Product } from "../../generated/prisma";
 
 export default async function createSale(c: Context) {
-    try {
-        // Get the business's id
+  try {
+    const { businessId, products, customerId, total, zigTotal, paymentMethod } = await c.req.json();
 
-        // Get the sale data
-        const data = await c.req.json();
-
-        const businessId = data.businessId;
-
-        let { productIds, customerId, total, zigTotal, paymentMethod } = data;
-
-        console.log(data);
-
-        total = Number(total);
-        zigTotal = Number(zigTotal);
-
-        // Find out if the business exists
-        const business = await prisma.business.findUnique({
-            where: {
-                id: businessId
-            }
-        });
-
-        // If the business does not exist...
-        if (!business) {
-            // ..throw an error
-            return c.json({
-                message: "Business does not exist"
-            }, 400);
-        }
-
-        // Find out if the customer is registered, if not....create an entry for them
-        let customer = await prisma.customer.findUnique({
-            where: {
-                id: customerId
-            }
-        });
-
-        // Update the customer's total spent values
-        await prisma.customer.update({
-            where: { id: customerId },
-            data: {
-                totalSpent: {
-                    increment: total,
-                },
-                totalSpentZig: {
-                    increment: zigTotal,
-                },
-            },
-        });
-
-        // Create the sale
-        const sale = await prisma.sale.create({
-            data: {
-                total,
-                zigTotal,
-                businessId,
-                customerId: customerId,
-                items: {
-                    connect: productIds.map((id: string) => ({ id })),
-                },
-                paymentType: paymentMethod
-            },
-        });
-
-        // Return the sale id
-        return c.json({
-            message: "Sale completed !",
-            saleId: sale.id
-        })
-    } catch (e) {
-        console.log("An error occured while creating the sale: ", e);
-
-        return c.json({
-            message: "An error occured while creating the sale"
-        }, 500)
+    // Validate business
+    const business = await prisma.business.findUnique({ where: { id: businessId } });
+    if (!business) {
+      return c.json({ message: "Business does not exist" }, 400);
     }
+
+    // Validate customer
+    const customer = await prisma.customer.findUnique({ where: { id: customerId } });
+    if (!customer) {
+      return c.json({ message: "Customer not found" }, 400);
+    }
+
+    // Update customer total spent
+    await prisma.customer.update({
+      where: { id: customerId },
+      data: {
+        totalSpent: { increment: Number(total) },
+        totalSpentZig: { increment: Number(zigTotal) },
+      },
+    });
+
+    // Create sale
+    const sale = await prisma.sale.create({
+      data: {
+        total: Number(total),
+        zigTotal: Number(zigTotal),
+        businessId,
+        customerId,
+        paymentType: paymentMethod,
+      },
+    });
+
+    // Create sale items
+    const saleItemsData = products.map((p: { product: Product; quantity: number }) => ({
+      productId: p.product.id,
+      quantity: p.quantity,
+      saleId: sale.id,
+    }));
+    await prisma.saleItem.createMany({ data: saleItemsData });
+
+    // Update product inventories individually
+    await Promise.all(
+      products.map(({ product, quantity }: { product: Product; quantity: number }) =>
+        prisma.product.update({
+          where: { id: product.id },
+          data: {
+            inventory: { decrement: quantity },
+          },
+        })
+      )
+    );
+
+    return c.json({
+      message: "Sale completed!",
+      saleId: sale.id,
+    });
+  } catch (error) {
+    console.error("An error occurred while creating the sale:", error);
+    return c.json(
+      { message: "An error occurred while creating the sale" },
+      500
+    );
+  }
 }
