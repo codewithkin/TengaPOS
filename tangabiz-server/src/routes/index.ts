@@ -19,6 +19,7 @@ import downloadSale from "../controllers/sales/downloadSale";
 import getRecentSales from "../controllers/sales/getRecentSales";
 import getSalesAnalytics from "../controllers/sales/getSalesAnalytics";
 import { getTopSellingProducts } from "../controllers/products/topSellingProducts";
+import getSales from "../controllers/sales/getSales";
 export const routes = new Hono();
 
 // Get all data
@@ -57,6 +58,7 @@ routes.post("/customers", createCustomer);
 // Sale routes
 routes.post("/sale", createSale);
 routes.get("/sale", getSale);
+routes.get("/sales", getSales);
 routes.get("/sale/download", downloadSale);
 routes.get("/sales/recent", getRecentSales);
 routes.get("/sales/analytics", getSalesAnalytics);
