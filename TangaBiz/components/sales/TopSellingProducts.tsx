@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, FlatList } from 'react-native';
+import { View, Text, Image, FlatList, Pressable } from 'react-native';
 import { MotiView } from 'moti';
 import { Skeleton } from 'moti/skeleton';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { router } from 'expo-router';
 
 type Product = {
   id: string;
@@ -102,7 +103,7 @@ export default function TopSellingProducts() {
           <MotiView
             key={item}
             transition={{ type: 'timing' }}
-            className="flex-row items-center py-3 border-b border-gray-100"
+            className="flex-row items-center p-3 border border-gray-100"
           >
             <Skeleton colorMode="light" width={40} height={40} radius="round" />
             <Skeleton colorMode="light" width={120} height={16} radius="round" />
@@ -136,22 +137,26 @@ export default function TopSellingProducts() {
         data={data.products}
         scrollEnabled={false}
         renderItem={({ item }) => (
-          <View className="flex-row items-center w-full justify-between py-3 border-b border-gray-100">
-            <View className="flex flex-row gap-2 itenms-center">
+          <Pressable
+          onPress={() => {
+            router.push(`/products/${item.id}`);
+          }}
+          className="flex-row items-center w-full mb-4 dark:bg-white justify-between rounded-xl p-3 border border-gray-100">
+            <View className="flex flex-row items-center">
                 {item.imageUrl ? (
                 <Image 
                     source={{ uri: item.imageUrl }} 
                     className="w-10 h-10 rounded-full mr-3" 
                 />
                 ) : (
-                <View className="w-10 h-10 rounded-full mr-3 bg-gray-200" />
+                <View className="w-10 h-10 rounded-full mr-3 bg-gray-200 dark:bg-gray-800" />
                 )}
-                <Text className="text-base text-gray-800 dark:text-white">{item.name}</Text>
+                <Text className="text-base text-gray-800 dark:text-gray-800">{item.name}</Text>
             </View>
 
             {/* Number of sales */}
-            <Text className="text-base text-gray-800 dark:text-gray-200">{item.totalSold} sales</Text>
-          </View>
+            <Text className="text-base text-gray-800 dark:text-gray-800">{item.totalSold} sales</Text>
+          </Pressable>
         )}
         keyExtractor={(item) => item.id}
       />
