@@ -20,6 +20,7 @@ import getRecentSales from "../controllers/sales/getRecentSales";
 import getSalesAnalytics from "../controllers/sales/getSalesAnalytics";
 import { getTopSellingProducts } from "../controllers/products/topSellingProducts";
 import getSales from "../controllers/sales/getSales";
+import updateProductInventory from "../controllers/products/updateProductInventory";
 export const routes = new Hono();
 
 // Get all data
@@ -45,6 +46,9 @@ routes.get("/products/search", searchForProduct);
 
 // Edit product
 routes.put("/products", editProduct);
+
+// Update product inventory
+routes.put("/products/inventory", updateProductInventory);
 
 // Delete product
 routes.delete("/products", createProduct);
