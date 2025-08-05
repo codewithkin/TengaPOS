@@ -4,12 +4,12 @@ import { prisma } from "../../helpers/prisma";
 export default async function deleteCustomer(c: Context) {
     try {
         // Get the Customer's id
-        const customerId = c.req.query("CustomerId");
+        const { id } = await c.req.json();
 
         // Find out if it exists
         const Customer = await prisma.customer.findUnique({
             where: {
-                id: customerId
+                id
             }
         });
 
@@ -23,7 +23,7 @@ export default async function deleteCustomer(c: Context) {
         // Now delete the Customer
         await prisma.customer.delete({
             where: {
-                id: customerId
+                id
             }
         });
 
