@@ -60,11 +60,11 @@ function CustomerCard({ customer, onPress }: { customer: Customer; onPress: () =
             }} className={`bg-red-500 p-2 rounded-full ${isDeleting ? 'opacity-50' : ''}`}>
                 {isDeleting ? <Loader2 className="animate-spin" size={18} strokeWidth={2} /> : <Trash size={18} strokeWidth={2} color="white" />}
             </Pressable>
-            <Pressable onPress={() => {
+            {/* <Pressable onPress={() => {
                 router.push(`/modals/customers/${customer.id}`)
             }} className="bg-blue-500 p-2 rounded-full">
                 <Pencil fill="white" size={18} strokeWidth={0} />
-            </Pressable>
+            </Pressable> */}
         </View>
       </View>
     </Pressable>
