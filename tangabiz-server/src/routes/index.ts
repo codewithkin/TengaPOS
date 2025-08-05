@@ -21,6 +21,7 @@ import getSalesAnalytics from "../controllers/sales/getSalesAnalytics";
 import { getTopSellingProducts } from "../controllers/products/topSellingProducts";
 import getSales from "../controllers/sales/getSales";
 import updateProductInventory from "../controllers/products/updateProductInventory";
+import editCustomer from "../controllers/customers/editCustomer";
 export const routes = new Hono();
 
 // Get all data
@@ -55,6 +56,7 @@ routes.delete("/products", createProduct);
 
 /* Customer routes */
 routes.get("/customers", getCustomers);
+routes.put("/customers", editCustomer);
 routes.get("/customers/search", searchCustomer);
 routes.delete("/customers", deleteCustomer);
 routes.post("/customers", createCustomer);
