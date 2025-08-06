@@ -17,13 +17,11 @@ RUN bun install
 COPY . .
 
 # After copying code and installing dependencies
-RUN bunx prisma generate
+# RUN bunx prisma generate
 
-RUN bunx prisma migrate deploy
-
+# RUN bunx prisma migrate deploy
 
 # Expo port
 EXPOSE 8080
 
-# Start the app
-CMD ["bun", "start"]
+CMD ["sh", "-c", "bunx prisma generate && bunx prisma migrate deploy && bun run start"]
