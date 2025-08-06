@@ -4,7 +4,7 @@ import { Context } from "hono"
 
 // Get all products with inventory data (including products with zero sales)
 const getAllProducts = async (c: Context) => {
-  const businessId = c.req.query('businessId')
+  const businessId = c.req.query('id')
   
   if (!businessId) {
     throw new HTTPException(400, { message: 'Business ID is required' })
