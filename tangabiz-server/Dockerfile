@@ -25,4 +25,4 @@ RUN bunx prisma migrate deploy
 EXPOSE 8080
 
 # Start the app
-CMD ["bun", "dev"]
+CMD ["bun", "start"]
