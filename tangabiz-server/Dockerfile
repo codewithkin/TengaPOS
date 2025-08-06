@@ -19,6 +19,9 @@ COPY . .
 # After copying code and installing dependencies
 RUN bunx prisma generate
 
+RUN bunx prisma migrate deploy
+
+
 # Expo port
 EXPOSE 8080
 
