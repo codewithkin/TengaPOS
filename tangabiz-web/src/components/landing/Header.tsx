@@ -47,7 +47,7 @@ export default function Header() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="flex px-4 sm:px-8 md:px-20 py-24 md:py-30 flex-col gap-4 items-center justify-center z-10"
+        className="flex px-4 sm:px-8 md:px-20 py-12 sm:py-24 md:py-30 flex-col gap-4 items-center justify-center z-10"
       >
         <motion.article
           variants={fadeInUp}
@@ -70,9 +70,9 @@ export default function Header() {
 
         <motion.article
           variants={fadeInUp}
-          className="flex flex-col w-full md:flex-row items-center justify-center gap-4"
+          className="flex flex-col w-full md:flex-row items-center justify-center gap-2 md:gap-4"
         >
-          <Button className="bg-green-600 hover:bg-green-700" asChild>
+          <Button size="lg" className="bg-green-600 w-full md:w-fit hover:bg-green-700" asChild>
             <Link
               href="https://expo.dev/artifacts/eas/goiKqtKVWn8xQWbhUcZ8qE.apk"
               target="_blank"
@@ -89,7 +89,7 @@ export default function Header() {
             </Link>
           </Button>
 
-          <Button variant="outline" asChild>
+          <Button size="lg"  className="w-full md:w-fit" variant="outline" asChild>
             <Link href="/features">View features</Link>
           </Button>
         </motion.article>
