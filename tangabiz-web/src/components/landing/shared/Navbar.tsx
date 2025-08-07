@@ -68,8 +68,8 @@ export default function Navbar() {
             <Link
               className={
                 path === link.href
-                  ? "text-blue-500 font-semibold text-md"
-                  : "text-gray-600 text-sm"
+                  ? "text-blue-500 hover:text-blue-800 transition duration-500 font-semibold text-md"
+                  : "text-gray-600 transition duration-500 hover:text-gray-800 hover:font-medium text-sm"
               }
               href={link.href}
             >
