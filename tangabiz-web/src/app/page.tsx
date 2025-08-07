@@ -1,5 +1,9 @@
+import Header from "@/components/landing/Header";
+
 export default function LandingPage () {
   return (
-    <h2>Landing page</h2>
+    <>
+      <Header />
+    </>
   )
 }
