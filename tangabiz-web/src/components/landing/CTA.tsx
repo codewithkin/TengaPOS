@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export default function CTA() {
   return (
-    <section className="w-full px-6 py-20 md:px-20 bg-gray-50" id="download">
+    <section className="w-full bg-slate-200 px-6 py-20 md:px-20" id="download">
       <motion.div
         className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
         initial="hidden"
