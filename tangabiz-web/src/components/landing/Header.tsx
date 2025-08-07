@@ -106,7 +106,7 @@ export default function Header() {
         <Image
           width={300}
           height={300}
-          src="/images/showcases/main.png"
+          src="/images/main.png"
           alt="Main app showcase"
         />
       </motion.div>
