@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +11,20 @@ import axios from "axios";
 import { toast } from "sonner";
 
 export default function PaymentsPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+                    <div className="text-gray-500">Loading payment status...</div>
+                </div>
+            }
+        >
+            <PaymentsContent />
+        </Suspense>
+    );
+}
+
+function PaymentsContent() {
     const searchParams = useSearchParams();
     const success = searchParams.get("success");
     const plan = searchParams.get("plan");
@@ -20,19 +34,22 @@ export default function PaymentsPage() {
     const [showErrorCard, setShowErrorCard] = useState(false);
 
     const { isLoading, error } = useQuery({
-        queryKey: ["upgrade"],
+        queryKey: ["upgrade", plan, email],
         queryFn: async () => {
-            const res = await axios.post(`${process.env.NODE_ENV}/api/tengapos/payments/upgrade`, {
-                plan,
-                businessEmail: email,
-            });
+            const res = await axios.post(
+                `/api/tengapos/payments/upgrade`,
+                {
+                    plan,
+                    businessEmail: email,
+                }
+            );
 
             if (res.status === 200) {
                 toast.success("Plan upgraded successfully!");
                 setShowSuccessCard(true);
             }
         },
-        enabled: success === "true",
+        enabled: success === "true" && !!plan && !!email,
     });
 
     useEffect(() => {
@@ -93,8 +110,12 @@ export default function PaymentsPage() {
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.4 }}
                         >
-                            Your account <span className="font-medium text-yellow-500">{email}</span> has been upgraded successfully.
-                            You can now open the mobile app to continue.
+                            Your account{" "}
+                            <span className="font-medium text-yellow-500">
+                                {email}
+                            </span>{" "}
+                            has been upgraded successfully. You can now open the
+                            mobile app to continue.
                         </motion.p>
 
                         <motion.div
@@ -140,7 +161,11 @@ export default function PaymentsPage() {
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.4 }}
                         >
-                            We couldn’t upgrade the plan for <span className="font-medium text-red-500">{email}</span>. <br />
+                            We couldn’t upgrade the plan for{" "}
+                            <span className="font-medium text-red-500">
+                                {email}
+                            </span>
+                            . <br />
                             Please contact the developer for assistance:
                             <br />
                             <span className="block mt-2 font-semibold">
